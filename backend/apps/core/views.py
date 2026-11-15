@@ -26,4 +26,3 @@ class PerfilUsuarioView(APIView):
     def get(self, request):
         serializer = UsuarioSerializer(request.user)
         return Response(serializer.data)
-

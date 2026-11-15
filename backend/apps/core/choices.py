@@ -8,4 +8,3 @@ class RolUsuario(models.TextChoices):
     GERENTE = "gerente", "Gerente de local"
     OPERARIO = "operario", "Operario de producción"
     VENDEDOR = "vendedor", "Vendedor / Cajero"
-

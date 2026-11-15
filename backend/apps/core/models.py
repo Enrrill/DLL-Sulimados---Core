@@ -102,4 +102,3 @@ class Usuario(AbstractBaseUser, PermissionsMixin, TimeStampedModel, ActivoMixin)
 
     def __str__(self):
         return f"{self.nombre_usuario} ({self.get_rol_display()})"
-

@@ -215,4 +215,3 @@ CORS_ALLOWED_ORIGINS = [
     origin.strip() for origin in cors_origins.split(",") if origin.strip()
 ]
 CORS_ALLOW_CREDENTIALS = True
-

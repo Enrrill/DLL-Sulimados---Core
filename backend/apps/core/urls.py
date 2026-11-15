@@ -13,4 +13,3 @@ urlpatterns = [
     path("", include(router.urls)),
     path("perfil/", PerfilUsuarioView.as_view(), name="perfil-usuario"),
 ]
-

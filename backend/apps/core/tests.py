@@ -19,4 +19,3 @@ class CoreModelsTest(TestCase):
         self.assertTrue(user.check_password("securepassword"))
         self.assertTrue(user.is_active)
         self.assertFalse(user.is_staff)
-

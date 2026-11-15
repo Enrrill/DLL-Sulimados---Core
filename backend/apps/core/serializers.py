@@ -29,4 +29,3 @@ class UsuarioSerializer(serializers.ModelSerializer):
             "activo",
         ]
         read_only_fields = ["id"]
-

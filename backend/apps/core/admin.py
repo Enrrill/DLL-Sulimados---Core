@@ -25,4 +25,3 @@ class UsuarioAdmin(admin.ModelAdmin):
     )
     list_filter = ("rol", "es_global", "activo", "local")
     search_fields = ("nombre_usuario", "correo", "nombre", "apellido")
-

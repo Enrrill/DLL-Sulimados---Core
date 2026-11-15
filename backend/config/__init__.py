@@ -1,2 +1,1 @@
 """Configuración del proyecto backend."""
-
