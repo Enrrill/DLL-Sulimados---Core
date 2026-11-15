@@ -1,211 +1,118 @@
-# Sistema Web de Gestión Comercial para Negocio de Sublimación 
+# DLL Sublimados — Core
 
-Un sistema web enfocado en la automatización, centralización y control eficiente de las operaciones comerciales de un negocio de productos personalizados y sublimación.
+Sistema integral de gestión para el negocio **DLL Sublimados** (sublimación, planchado y confección de prendas y objetos personalizados), distribuido en 3 locales y conectado a un servidor central.
 
----
-
-## 📖 Descripción del Proyecto
-
-El crecimiento en las operaciones de los negocios de sublimación exige un control preciso sobre las ventas, la disponibilidad de insumos y la relación con los proveedores. Este proyecto surge como solución a la necesidad de abandonar los registros manuales o descentralizados para dar paso a una plataforma web integrada.
-
-El sistema permite gestionar de manera unificada:
-* **Control de Ventas e Ingresos:** Registro detallado de transacciones comerciales e historial de operaciones.
-* **Gestión de Inventarios y Recursos:** Monitoreo en tiempo real de insumos críticos (tintas, papel, prendas, etc.) y productos terminados.
-* **Administración de Proveedores:** Catálogo organizado de proveedores y registro de compras.
-* **Seguridad y Control de Acceso:** Gestión de usuarios con roles y permisos diferenciados.
-* **Reportes e Informes:** Generación de consultas clave para la toma de decisiones.
+Consta de un backend monolítico modular en **Django 6 + PostgreSQL** (organizado en `backend/apps/` con `manage.py` en la raíz) y una SPA en **React 19 + TypeScript + Vite + Tailwind CSS** (en `frontend/`).
 
 ---
 
-## 🏗️ Paradigma de Desarrollo: POO
+## 📚 Documentación del sistema
 
-Para garantizar la escalabilidad y el mantenimiento del sistema, este proyecto se rige estrictamente por el paradigma de **Programación Orientada a Objetos (POO)**. 
+Toda la especificación técnica, modelos de datos, diagramas Mermaid y normativas viven en el directorio [`docs/`](docs/00-indice-del-sistema.md):
 
-* **Encapsulamiento:** Protección de los datos sensibles en las clases (ej. contraseñas de usuarios).
-* **Herencia y Polimorfismo:** Reutilización de código a través de clases base (ej. una clase `Persona` de la cual heredan `Usuario`, `Cliente` y `Proveedor`).
-* **Abstracción:** Modelado de entidades del mundo real (Venta, Producto, Insumo) en modelos de Django.
-
----
-
-## 👥 Organización Estructural (Equipos de Clase)
-
-Para el éxito de este proyecto masivo, el desarrollo se ha fragmentado y asignado a distintos grupos del salón. La comunicación y el respeto por los límites de cada equipo son vitales.
-
-1. **🛡️ Grupo de Gestión (Nuestro Grupo):** Administradores absolutos del repositorio (DevOps/Scrum Masters). Encargados de revisar, aceptar y fusionar (Merge) el código de los demás. Supervisores del cumplimiento del Git Flow.
-2. **💾 Grupo de Base de Datos:** Responsables del diseño del modelo Entidad-Relación, scripts en SQL y configuración de los modelos en SQLite/Django.
-3. **⚙️ Grupo de Backend:** Encargados de programar la lógica de negocio, controladores (Views en Django) y aplicar las normas de POO.
-4. **🎨 Grupo de Frontend:** Desarrolladores de las interfaces de usuario (HTML, CSS, JavaScript) y maquetación web.
-5. **🧪 Grupo de Testing y Calidad:** Responsables de probar los módulos antes de pasar a la rama principal.
+| Documento | Descripción |
+| --- | --- |
+| [00 Índice del sistema](docs/00-indice-del-sistema.md) | Catálogo completo de los 14 documentos de especificación. |
+| [01 Resumen ejecutivo](docs/01-resumen-ejecutivo.md) | Visión del negocio, alcance, locales y las 11 apps. |
+| [04 Arquitectura del monolito modular](docs/04-arquitectura-del-monolito-modular.md) | Organización de backend, frontend y reglas de comunicación. |
+| [06 Modelo de datos](docs/06-modelo-de-datos.md) | MER transversal y detalle por esquema (`docs/modelo-datos/`). |
+| [08 Estructura del frontend](docs/08-estructura-del-frontend.md) | Arquitectura de la SPA: layout, providers, features y componentes. |
+| [10 Git Flow y normas del equipo](docs/10-git-flow-y-normas-del-equipo.md) | Ramas (`main`, `testeo`, `develop`, `feature/*`), roles y flujo de PR. |
+| [11 Normas de código y POO](docs/11-normas-de-codigo-y-poo.md) | Paradigma POO, PEP 8, docstrings obligatorios y checklist. |
+| [13 Instalación y entorno local](docs/13-instalacion-y-entorno-local.md) | Guía de puesta en marcha paso a paso para backend y frontend. |
+| [14 Convenciones de commits](docs/14-convenciones-de-commits.md) | Estándar Conventional Commits con títulos imperativos y desglose en viñetas. |
 
 ---
 
-## 📜 Normas Obligatorias para el Éxito del Proyecto
+## 🚀 Inicio rápido (Desarrollo local)
 
-Para evitar conflictos de código, pérdida de avances y asegurar un entorno de trabajo profesional, **TODOS los grupos deben firmar y cumplir** las siguientes normativas:
+### Requisitos previos
 
-### 1. Políticas Estrictas de Repositorio
-* 🚫 **PROHIBICIÓN TOTAL:** Ningún estudiante (fuera del grupo de Gestión) puede hacer un `commit` o `push` directo a las ramas `main`, `testeo` o `develop`. 
-* Todo nuevo código debe ingresar obligatoriamente a través de un **Pull Request (PR)**.
-* Los PR solo serán revisados y aprobados por el **Grupo de Gestión**. Si un PR rompe el código actual, será rechazado inmediatamente.
+- Python 3.12+
+- PostgreSQL 14+
+- Node.js 20+ y npm
 
-### 2. Estándares de Código y POO
-* El código fuente (Python) debe respetar el estándar de estilo **PEP 8**.
-* Todo método, clase o función debe contener comentarios técnicos (*Docstrings*) explicando qué hace, qué recibe y qué retorna.
-* Está prohibido el uso de variables globales innecesarias; todo debe estar encapsulado en sus respectivas clases.
+### 1. Backend (Django)
 
-### 3. Resolución de Conflictos
-* Antes de solicitar un PR, el desarrollador **debe** actualizar su rama local con la última versión de `develop` (`git pull origin develop`) y resolver cualquier conflicto de fusión (Merge Conflict) en su propia computadora.
+```bash
+# 1. Crear y activar entorno virtual
+python3 -m venv venv
+source venv/bin/activate       # En Linux/macOS
+# .\venv\Scripts\Activate.ps1  # En Windows PowerShell
+
+# 2. Instalar dependencias
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+
+# 3. Base de datos PostgreSQL (ver database/00_crear_bd.sql)
+psql -U postgres -f database/00_crear_bd.sql
+
+# 4. Configurar variables de entorno
+cp .env.example .env
+
+# 5. Migraciones limpias y datos iniciales
+python manage.py migrate
+psql -U postgres -d dll_sublimados -f database/01_datos_iniciales.sql
+
+# 6. Crear superusuario y levantar servidor
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+La API estará disponible en `http://localhost:8000/api/v1/` y el administrador en `http://localhost:8000/admin/`.
+
+### 2. Frontend (React + Vite)
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+La SPA estará disponible en `http://localhost:5173`. Las llamadas a `/api` se redirigen automáticamente al backend.
 
 ---
 
-## 🌿 Flujo de Trabajo: Git Flow
+## 🛠️ Herramientas de calidad
 
-Este proyecto utiliza la estrategia de ramificación **Git Flow** adaptada con una rama de testeo integral. Todo estudiante debe conocer la estructura y los comandos.
+```bash
+# Verificación de estilo PEP 8
+flake8 backend/ manage.py
 
-<p align="center">
-  <img src="docs/ramas git flow.png" alt="Ramas Git Flow" width="800"/>
-</p>
+# Formateo de código Python
+black --check backend/ manage.py
 
-<p align="center">
-  <img src="docs/gitflow_diagram.png" alt="Diagrama Git Flow - Sistema de Sublimación" width="800"/>
-</p>
+# Orden de imports
+isort --check-only backend/ manage.py
 
-### Estructura de Ramas
+# Pruebas automatizadas
+pytest
 
-| Rama | Propósito | Origen | Destino final |
-|------|-----------|--------|---------------|
-| `main` | Versión estable y final del proyecto (producción). | — | — |
-| `testeo` | Copia de `main`. Se usa para **probar todo el proyecto integrado** antes de subir cambios a `main`. | `main` | `main` |
-| `develop` | Rama de integración para **probar módulos individuales** de cada equipo. | `testeo` | `testeo` |
-| `feature/*` | Ramas de trabajo de cada equipo para desarrollar funcionalidades específicas. | `develop` | `develop` |
-| `hotfix/*` | Correcciones urgentes en producción. | `main` | `main` y `testeo` |
+# Compilación de frontend
+cd frontend && npm run build
+```
 
-### Flujo general del proyecto
+---
+
+## 📝 Convenciones de commits
+
+El proyecto exige el uso estricto de **Conventional Commits**:
 
 ```text
-feature/* ──PR──▶ develop (prueba de módulos individuales)
-                      │
-                      ▼
-               develop ──PR──▶ testeo (prueba del proyecto completo)
-                                    │
-                                    ▼
-                             testeo ──PR──▶ main (versión final / entrega)
+<tipo>(<ámbito>): <título en imperativo, minúscula, sin punto final>
+
+- <descripción detallada del cambio 1>
+- <descripción detallada del cambio 2>
+- <descripción detallada del cambio 3>
+
+Refs: RF-XX
 ```
 
-> **⚠️ IMPORTANTE:** La rama `testeo` es una **copia de `main`** y solo recibe código que ya fue probado en `develop`. Al finalizar el proyecto, el contenido de `testeo` se fusiona a `main` como entrega final.
-
-### Comandos de uso diario por los equipos:
-
-**1. Crear la rama para tu módulo (Desde develop):**
-```bash
-git checkout develop
-git pull origin develop
-git checkout -b feature/nombre-de-tu-tarea
-```
-*(Ejemplos: `feature/modelo-bd`, `feature/vistas-backend`, `feature/ui-ventas`)*
-
-**2. Guardar y subir tu trabajo:**
-```bash
-git add .
-git commit -m "feat: agrega clase Producto con POO"
-git push origin feature/nombre-de-tu-tarea
-```
-
-**3. Crear un Pull Request:**
-- Las ramas `feature/*` hacen PR hacia `develop`.
-- Una vez probados los módulos en `develop`, el **Grupo de Gestión** hace PR de `develop` hacia `testeo`.
-- Al finalizar las pruebas integrales en `testeo`, el **Grupo de Gestión** hace PR de `testeo` hacia `main`.
-
-**4. Crear un Hotfix (Solo emergencias en producción):**
-```bash
-git checkout main
-git checkout -b hotfix/solucion-error-critico
-```
-> Los hotfixes se fusionan tanto a `main` como a `testeo` para mantener ambas ramas sincronizadas.
+Consulta [14 Convenciones de commits](docs/14-convenciones-de-commits.md) para la lista completa de tipos, ámbitos válidos y ejemplos.
 
 ---
 
-## 📦 Módulos del Sistema y Estructura
-
-- **Usuarios:** Gestión, roles y control de acceso.
-- **Productos:** Inventario de insumos.
-- **Ventas:** Registro y facturación.
-- **Proveedores:** Compras y abastecimiento.
-- **Reportes:** Generación de informes.
-
-```text
-proyecto-sublimacion/
-├── docs/                    # Documentación, diagramas e imágenes
-├── database/                # Scripts SQL 
-├── src/                     # Código fuente Django
-└── tests/                   # Pruebas unitarias
-```
-
----
-
-## 🚀 Instalación y Entorno Virtual (venv)
-
-Para no saturar el Python global de tu sistema y asegurar que todos los equipos usen las mismas versiones de las librerías, **es obligatorio el uso de un entorno virtual (env)**.
-
-### Pasos para iniciar en tu máquina local:
-
-1. **Clonar el repositorio y situarse en la rama develop:**
-   `ash
-   git checkout develop
-   git pull origin develop
-   `
-
-2. **Crear el entorno virtual (env):**
-   `ash
-   # En la raíz del proyecto:
-   python -m venv venv
-   `
-
-3. **Activar el entorno virtual:**
-   - En **Windows (PowerShell):**
-     `powershell
-     .\venv\Scripts\Activate.ps1
-     `
-   - En **Windows (CMD):**
-     `cmd
-     .\venv\Scripts\activate.bat
-     `
-   - En **Linux / macOS:**
-     `ash
-     source venv/bin/activate
-     `
-
-4. **Instalar las dependencias encapsuladas:**
-   `ash
-   pip install -r src/requirements.txt
-   `
-
-5. **Configurar variables de entorno:**
-   - Copiar el archivo de ejemplo src/.env.example a src/.env:
-     `powershell
-     Copy-Item src\.env.example src\.env
-     `
-   - Configurar las credenciales de tu base de datos local en src/.env.
-
-6. **Aplicar las migraciones e iniciar el servidor:**
-   `ash
-   python src/manage.py migrate
-   python src/manage.py runserver
-   `
-
-> 💡 **Nota de Git:** La carpeta env/ está ignorada en el .gitignore. **Nunca se debe subir la carpeta del entorno virtual al repositorio**, solo el archivo src/requirements.txt.
-
----
-
-## 💻 Tecnologías Utilizadas
-
-* **Lenguaje:** Python (Orientado a Objetos)
-* **Backend:** Django Framework
-* **Frontend:** HTML / CSS / JavaScript
-* **Base de Datos:** PostgreSQL
-* **Control de Versiones:** Git / GitHub
-* **Gestión de Tareas:** Trello
-
----
 ## 📄 Licencia
-Este proyecto es de carácter académico y está destinado al uso exclusivo en la evaluación de la materia Lenguajes de Programación III.
+
+Este proyecto es de carácter académico y está destinado al uso exclusivo en la evaluación de la materia **Lenguajes de Programación III**.
+
