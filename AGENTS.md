@@ -1,7 +1,7 @@
 # DLL Sublimados — Core
 
 Monorepo de gestión para negocio de sublimación, confección y planchado (3 locales).
-Stack: Django 6.1 + PostgreSQL 14+ + React 19 + TypeScript + Vite + Tailwind CSS v4.
+Stack: Django 6.1 + PostgreSQL 14+ (Neon) + React 19 + TypeScript + Vite + Tailwind CSS v4.
 
 ---
 
@@ -15,13 +15,16 @@ Stack: Django 6.1 + PostgreSQL 14+ + React 19 + TypeScript + Vite + Tailwind CSS
 - `frontend/`: SPA en React 19 + Vite + Tailwind CSS v4.
 - `database/`: Scripts SQL puros de arranque y datos iniciales (mantenido por el Grupo de Base de Datos).
 - `docs/`: Vault de documentación técnica (Markdown con diagramas Mermaid).
+- `neon.ts`: Configuración de Neon (política de branches, servicios habilitados).
+- `package.json`: Dependencias de configuración de Neon (`@neon/config`, `@neon/env`) usadas por `neon.ts`.
 
 ---
 
 ## 🐍 Backend (Django)
 
 - **Settings:** `backend/config/settings.py` (`DJANGO_SETTINGS_MODULE=backend.config.settings`).
-- **Variables de entorno:** Archivo `.env` en la raíz del proyecto (cargado automáticamente con ruta absoluta).
+- **Variables de entorno:** Archivo `.env` en la raíz del proyecto (cargado automáticamente con ruta absoluta). Ver `.env.example` para la lista completa de variables requeridas.
+- **Base de datos:** PostgreSQL 14+ en Neon (Lakebase Postgres serverless). La conexión se configura via `DATABASE_URL` (pooler PgBouncer, para la app) y `DATABASE_URL_UNPOOLED` (endpoint directo, solo para migraciones). Ver `docs/neon.md`.
 - **Registro de apps:** En `INSTALLED_APPS` se registran como `'backend.apps.<nombre>'`.
 - **Modelo de Usuario:** `core.Usuario` fijado en `AUTH_USER_MODEL = 'core.Usuario'`:
   - Hereda de `AbstractBaseUser`, `PermissionsMixin`, `TimeStampedModel` y `ActivoMixin`.
@@ -83,6 +86,9 @@ source venv/bin/activate
 python manage.py check
 python manage.py migrate
 python manage.py runserver
+
+# Migraciones contra Neon (endpoint directo, sin pooler)
+DATABASE_URL=$DATABASE_URL_UNPOOLED python manage.py migrate
 
 # Calidad y pruebas
 flake8 backend/ manage.py
