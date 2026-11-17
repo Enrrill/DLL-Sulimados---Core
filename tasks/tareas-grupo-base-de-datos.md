@@ -65,10 +65,10 @@ Documento operativo para la distribución del trabajo del **Grupo de Base de Dat
 - `database/seeders/01_seed_nucleo.sql`
 
 #### 📝 Tareas de Modelado y DDL
-- [ ] **Módulo `core`:**
-  - [ ] Verificar y ajustar `Local` (`locales`) y `Usuario` (`usuarios`) ya existentes.
-  - [ ] Implementar modelo `TasaCambio` (`core_tasa_cambio`): fecha de vigencia, tasa USD $\rightarrow$ Bs (`dolares_a_bs`), registrado por (`ForeignKey('core.Usuario')`).
-  - [ ] Implementar modelo `ContadorCorrelativo` (`core_contador_correlativo`): tipo de comprobante (factura, nota_entrega, orden_produccion, etc.), prefijo, número actual, `local` (`ForeignKey('core.Local')`), control de concurrencia.
+- [x] **Módulo `core`:**
+  - [x] Verificar y ajustar `Local` (`locales`) y `Usuario` (`usuarios`) ya existentes.
+  - [x] Implementar modelo `TasaCambio` (`core_tasa_cambio`): fecha de vigencia, tasa USD $\rightarrow$ Bs (`dolares_a_bs`), registrado por (`ForeignKey('core.Usuario')`).
+  - [x] Implementar modelo `ContadorCorrelativo` (`core_contador_correlativo`): tipo de comprobante (factura, nota_entrega, orden_produccion, etc.), prefijo, número actual, `local` (`ForeignKey('core.Local')`), control de concurrencia.
 - [ ] **Módulo `audit`:**
   - [ ] Implementar modelo `BitacoraAccion` (`audit_bitacora_accion`): fecha (`creado_en`), usuario (`ForeignKey('core.Usuario')`), local (`ForeignKey('core.Local')`), acción (`INSERT`, `UPDATE`, `DELETE`, `LOGIN`, `APROBACION`), entidad (nombre de la tabla), entidad_id, datos_antes (JSONField), datos_despues (JSONField), ip_origen.
   - [ ] Implementar modelo `BitacoraStock` (`audit_bitacora_stock`): fecha, tipo_movimiento (ENTRADA, SALIDA, AJUSTE, TRANSFERENCIA), lote_id, producto_id, cantidad, local_origen_id, local_destino_id, usuario_id, motivo.
