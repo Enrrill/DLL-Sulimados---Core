@@ -6,7 +6,7 @@
 
 | Campo | Valor |
 |---|---|
-| Nombre | `my-first-project` |
+| Nombre | `dll-sublimados` |
 | ID | `falling-firefly-71986564` |
 | Organización | `org-sparkling-union-44915996` |
 | Región | `aws-sa-east-1` (São Paulo) |
