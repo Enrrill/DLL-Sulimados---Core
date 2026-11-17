@@ -4,6 +4,8 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+import dj_database_url
+
 # BASE_DIR apunta a la raíz del repositorio
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -15,7 +17,11 @@ if env_file.exists():
             line = line.strip()
             if line and not line.startswith("#") and "=" in line:
                 k, v = line.split("=", 1)
-                os.environ.setdefault(k.strip(), v.strip())
+                v = v.strip()
+                # Eliminar comillas envolventes simples o dobles (igual que python-decouple)
+                if len(v) >= 2 and v[0] == v[-1] and v[0] in ('"', "'"):
+                    v = v[1:-1]
+                os.environ.setdefault(k.strip(), v)
 
 SECRET_KEY = os.environ.get(
     "SECRET_KEY", "django-insecure-dll-sublimados-default-dev-key"
@@ -105,11 +111,26 @@ WSGI_APPLICATION = "backend.config.wsgi.application"
 ASGI_APPLICATION = "backend.config.asgi.application"
 
 # ============================================================
-# Base de datos (PostgreSQL 14+)
+# Base de datos (PostgreSQL 14+ / Neon)
 # ============================================================
-db_engine = os.environ.get("DB_ENGINE", "django.db.backends.postgresql")
+# Prioridad 1: DATABASE_URL (Neon — pooler PgBouncer).
+# Prioridad 2: DB_ENGINE=sqlite3 (pruebas rápidas locales).
+# Prioridad 3: Variables sueltas DB_* (PostgreSQL local sin Neon).
+#
+# IMPORTANTE: para migraciones usar DATABASE_URL_UNPOOLED (endpoint directo):
+#   DATABASE_URL=$DATABASE_URL_UNPOOLED python manage.py migrate
+_database_url = os.environ.get("DATABASE_URL")
 
-if "sqlite3" in db_engine:
+if _database_url:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=_database_url,
+            conn_max_age=600,         # keep-alive: reutiliza conexiones al pooler
+            conn_health_checks=True,  # descarta conexiones zombi automáticamente
+            ssl_require=True,         # Neon exige SSL
+        )
+    }
+elif "sqlite3" in os.environ.get("DB_ENGINE", "postgresql"):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -117,9 +138,10 @@ if "sqlite3" in db_engine:
         }
     }
 else:
+    # Desarrollo local sin Neon
     DATABASES = {
         "default": {
-            "ENGINE": db_engine,
+            "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.postgresql"),
             "NAME": os.environ.get("DB_NAME", "dll_sublimados"),
             "USER": os.environ.get("DB_USER", "postgres"),
             "PASSWORD": os.environ.get("DB_PASSWORD", ""),

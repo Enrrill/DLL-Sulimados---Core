@@ -53,3 +53,4 @@ frontend/.env.local
 .coverage
 htmlcov/
 .tox/
+.neon
