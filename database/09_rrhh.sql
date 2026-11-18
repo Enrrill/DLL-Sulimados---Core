@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS hr_trabajador (
     activo          BOOLEAN      NOT NULL DEFAULT true,
     creado_en       TIMESTAMPTZ  NOT NULL DEFAULT now(),
     actualizado_en  TIMESTAMPTZ  NOT NULL DEFAULT now(),
-    CONSTRAINT hr_trabajador_usuario_uk UNIQUE (usuario_id)
+    CONSTRAINT hr_trabajador_usuario_id_key UNIQUE (usuario_id)
 );
 CREATE INDEX IF NOT EXISTS hr_trabajador_cargo_idx
     ON hr_trabajador (cargo) WHERE activo;
