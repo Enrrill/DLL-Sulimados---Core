@@ -103,28 +103,28 @@ Documento operativo para la distribución del trabajo del **Grupo de Base de Dat
 - `database/seeders/02_seed_catalogo_inventario.sql`
 
 #### 📝 Tareas de Modelado y DDL
-- [ ] **Módulo `catalog`:**
-  - [ ] Implementar `Categoria` y `Subcategoria` (`catalog_categoria`, `catalog_subcategoria`).
-  - [ ] Implementar `UnidadMedida` (`catalog_unidad_medida`): código (`m`, `kg`, `pza`, `rollo`, `cm`), nombre, permite_decimales.
-  - [ ] Implementar `Talla` (`catalog_talla`): código, nombre, orden.
-  - [ ] Implementar `Material` (`catalog_material`): código, nombre, categoría, unidad_medida (`ForeignKey`), es_continuo (boolean para telas/rollos), stock_minimo_global.
-  - [ ] Implementar `Producto` (`catalog_producto`): código, nombre, descripción, subcategoría, tipo (`TERMINADO`, `SEMITERMINADO`, `SERVICIO`).
-  - [ ] Implementar `VarianteProducto` (`catalog_variante_producto`): producto (`ForeignKey`), talla (`ForeignKey`), color, sku, codigo_barras.
-  - [ ] Implementar `Servicio` (`catalog_servicio`): nombre, descripción, unidad_medida.
-- [ ] **Módulo `inventory`:**
-  - [ ] Implementar `Stock` (`inventory_stock`): local (`ForeignKey('core.Local')`), variante (`ForeignKey`), material (`ForeignKey`, null=True), cantidad_disponible, cantidad_reservada.
-  - [ ] Implementar `Lote` (`inventory_lote`): material (`ForeignKey`), local (`ForeignKey('core.Local')`), numero_lote, longitud_inicial (para rollos de tela/vinil), longitud_actual, costo_unitario, fecha_vencimiento/ingreso.
-  - [ ] Implementar `MovimientoStock` (`inventory_movimiento_stock`): tipo (`ENTRADA`, `SALIDA`, `TRANSFERENCIA`), local, cantidad, referencia.
-  - [ ] Implementar `GuiaTransferencia` y `LineaGuiaTransferencia` (`inventory_guia_transferencia`, `inventory_linea_guia`): tracking_code, local_origen, local_destino, estado (`BORRADOR`, `EN_TRANSITO`, `RECIBIDA`, `RECHAZADA`).
-  - [ ] Implementar `NivelMinimo` (`inventory_nivel_minimo`): local, producto/material, cantidad_minima_alerta.
+- [x] **Módulo `catalog`:**
+  - [x] Implementar `Categoria` y `Subcategoria` (`catalog_categoria`, `catalog_subcategoria`).
+  - [x] Implementar `UnidadMedida` (`catalog_unidad_medida`): código (`m`, `kg`, `pza`, `rollo`, `cm`), nombre, permite_decimales.
+  - [x] Implementar `Talla` (`catalog_talla`): código, nombre, orden.
+  - [x] Implementar `Material` (`catalog_material`): código, nombre, categoría, unidad_medida (`ForeignKey`), es_continuo (boolean para telas/rollos), stock_minimo_global.
+  - [x] Implementar `Producto` (`catalog_producto`): código, nombre, descripción, subcategoría, tipo (`TERMINADO`, `SEMITERMINADO`, `SERVICIO`).
+  - [x] Implementar `VarianteProducto` (`catalog_variante_producto`): producto (`ForeignKey`), talla (`ForeignKey`), color, sku, codigo_barras.
+  - [x] Implementar `Servicio` (`catalog_servicio`): nombre, descripción, unidad_medida.
+- [x] **Módulo `inventory`:**
+  - [x] Implementar `Stock` (`inventory_stock`): local (`ForeignKey('core.Local')`), variante (`ForeignKey`), material (`ForeignKey`, null=True), cantidad_disponible, cantidad_reservada.
+  - [x] Implementar `Lote` (`inventory_lote`): material (`ForeignKey`), local (`ForeignKey('core.Local')`), numero_lote, longitud_inicial (para rollos de tela/vinil), longitud_actual, costo_unitario, fecha_vencimiento/ingreso.
+  - [x] Implementar `MovimientoStock` (`inventory_movimiento_stock`): tipo (`ENTRADA`, `SALIDA`, `TRANSFERENCIA`), local, cantidad, referencia.
+  - [x] Implementar `GuiaTransferencia` y `LineaGuiaTransferencia` (`inventory_guia_transferencia`, `inventory_linea_guia`): codigo_guia (convención ES, antes tracking_code), local_origen, local_destino, estado (`BORRADOR`, `EN_TRANSITO`, `RECIBIDA`, `RECHAZADA`).
+  - [x] Implementar `NivelMinimo` (`inventory_nivel_minimo`): local, producto/material, cantidad_minima_alerta.
 
 #### 🌱 Seeders Iniciales (`database/seeders/02_seed_catalogo_inventario.sql`)
-- [ ] Unidades de medida oficiales: Metros (`m`), Centímetros (`cm`), Kilos (`kg`), Rollos (`rollo`), Piezas (`pza`), Unidades (`und`).
-- [ ] Tallas: `XS`, `S`, `M`, `L`, `XL`, `XXL` y tallas infantiles (`4`, `6`, `8`, `10`, `12`, `14`, `16`).
-- [ ] Categorías y Subcategorías: Telas Textiles, Tintas y Químicos, Viniles, Papel de Sublimación, Confección Terminada.
-- [ ] Catálogo inicial de materiales: Rollo Microdurazno Blanco 1.60m, Tinta Sublimación Cyan/Magenta/Yellow/Black, Vinil Textil Poliuretano, Papel Sublimación 100gr.
-- [ ] Catálogo de productos: Franela Deportiva Cuello Redondo Sublimada, Taza Blanca 11oz, Gorra Trucker.
-- [ ] Niveles mínimos de stock para alertas automáticas en L01, L02 y L03.
+- [x] Unidades de medida oficiales: Metros (`m`), Centímetros (`cm`), Kilos (`kg`), Rollos (`rollo`), Piezas (`pza`), Unidades (`und`).
+- [x] Tallas: `XS`, `S`, `M`, `L`, `XL`, `XXL` y tallas infantiles (`4`, `6`, `8`, `10`, `12`, `14`, `16`).
+- [x] Categorías y Subcategorías: Telas Textiles, Tintas y Químicos, Viniles, Papel de Sublimación, Confección Terminada.
+- [x] Catálogo inicial de materiales: Rollo Microdurazno Blanco 1.60m, Tinta Sublimación Cyan/Magenta/Yellow/Black, Vinil Textil Poliuretano, Papel Sublimación 100gr.
+- [x] Catálogo de productos: Franela Deportiva Cuello Redondo Sublimada, Taza Blanca 11oz, Gorra Trucker.
+- [x] Niveles mínimos de stock para alertas automáticas en L01, L02 y L03.
 
 ---
 
