@@ -183,29 +183,35 @@ Documento operativo para la distribución del trabajo del **Grupo de Base de Dat
 - `database/09_rrhh.sql`
 - `database/seeders/04_seed_ventas_precios_rrhh.sql`
 
+> **Nota de implementación:** donde esta lista difiere de la especificación oficial
+> (`docs/03` RF-36 a RF-48, `docs/modelo-datos/06.7`–`06.9`, `docs/ddl/06b.7`–`06b.9`),
+> se siguió la especificación. Cada punto indica lo implementado y la divergencia.
+> Moneda `USD`/`VES` y estados en MAYÚSCULA, alineados con `inventory`.
+
 #### 📝 Tareas de Modelado y DDL
-- [ ] **Módulo `sales`:**
-  - [ ] Implementar `Cliente` (`sales_cliente`): tipo_documento (`V`, `E`, `J`, `G`), numero_documento, nombre_razon_social, direccion, telefono, correo, limite_credito.
-  - [ ] Implementar `PedidoVenta` (`sales_pedido_venta`): numero_pedido, cliente, local_venta (`ForeignKey('core.Local')`), vendedor (`ForeignKey('hr.Trabajador')`), estado (`COTIZADO`, `CONFIRMADO`, `EN_PRODUCCION`, `LISTO`, `ENTREGADO`, `FACTURADO`, `ANULADO`), moneda, total_neto, iva, total_bruto.
-  - [ ] Implementar `LineaPedido` (`sales_linea_pedido`): pedido, producto (`ForeignKey('catalog.Producto')`), variante (`ForeignKey('catalog.VarianteProducto', null=True)`), cantidad, precio_unitario, subtotal.
-  - [ ] Implementar `Cobro` (`sales_cobro`): pedido, metodo_pago (`EFECTIVO_USD`, `PAGO_MOVIL`, `TRANSFERENCIA_BS`, `PUNTO_VENTA`, `ZELLE`), monto_moneda_original, tasa_cambio_aplicada, monto_usd_equivalente, referencia_bancaria.
-  - [ ] Implementar `FacturaVenta` (`sales_factura`): numero_control, pedido, fecha_emision, total_usd, total_bs.
-- [ ] **Módulo `pricing`:**
-  - [ ] Implementar `ParametroFormula` (`pricing_parametro_formula`): clave (`MARGEN_GANANCIA`, `IVA`, `DESCUENTO_MAYORISTA`), valor_numerico, descripcion.
-  - [ ] Implementar `ItemMatrizPrecios` (`pricing_matriz_precios`): producto/servicio, unidad_medida, rango_cantidad_min, rango_cantidad_max, precio_base, precio_final_sugerido.
-  - [ ] Implementar `HistorialCambioPrecio` (`pricing_historial_cambio`): matriz_item, precio_anterior, precio_nuevo, modificado_por (`ForeignKey('core.Usuario')`), justificacion.
-- [ ] **Módulo `hr`:**
-  - [ ] Implementar `Trabajador` (`hr_trabajador`): cedula, nombres, apellidos, cargo (`VENDEDOR`, `OPERARIO_CORTE`, `OPERARIO_PLANCHA`, `DISENADOR`, `GERENTE`), telefono, correo, fecha_ingreso.
-  - [ ] Implementar `TrabajadorLocal` (`hr_trabajador_local`): trabajador, local (`ForeignKey('core.Local')`), porcentaje_comision_venta, es_local_principal.
+- [x] **Módulo `sales`:**
+  - [x] Implementar `Cliente` (`sales_cliente`): nombre, telefono, correo, rif (vacío = consumidor final). *Spec 06.7: sin tipo_documento, direccion ni limite_credito.*
+  - [x] Implementar `PedidoVenta` (`sales_pedido_venta`): codigo, cliente (obligatorio), local, vendedor (ref. débil a `hr.Trabajador`), estado (`COTIZADO`, `CONFIRMADO`, `EN_PRODUCCION`, `LISTO`, `ENTREGADO`, `FACTURADO`, `ANULADO`), moneda, total, confirmado_en, fecha_compromiso, motivo_anulacion (obligatorio al anular, RF-43). *Spec: un solo `total`; neto/IVA se calculan.*
+  - [x] Implementar `LineaPedido` (`sales_linea_pedido`): tipo_linea (`PRODUCTO`, `PRODUCTO_PERSONALIZADO`, `SERVICIO_PURO`), variante, servicio, material, medida + unidad, cantidad, precio_unitario (snapshot), moneda, item_precio (ref. débil a la matriz), nota. *Spec: sin `subtotal` persistido.*
+  - [x] Implementar `Cobro` (`sales_cobro`): pedido, monto, moneda, metodo (`EFECTIVO`, `PUNTO`, `TRANSFERENCIA`, `DIVISA` según RF-42), referencia, tasa_aplicada (`core.TasaCambio`, obligatoria en Bs.), fecha, anulado_en. Admite cobros parciales.
+  - [x] Implementar `Factura` (`sales_factura`): pedido, local, numero, anio, tipo (`PROPIA`, `FISCAL`), estado (`EMITIDA`, `ANULADA`), total, moneda, fecha_emision, motivo_anulacion, emitida_por. Correlativo único por (tipo, local, año, número) (RF-40).
+- [x] **Módulo `pricing`:**
+  - [x] Implementar `ParametroFormula` (`pricing_parametro_formula`): porcentaje_margen, porcentaje_iva, fecha_desde (única), fecha_hasta, registrado_por. *Spec RF-45: vigencia por fechas en vez de clave/valor.*
+  - [x] Implementar `ItemMatrizPrecios` (`pricing_item_matriz_precios`): producto | variante | servicio (exactamente uno), material condicionante, unidad, medida + unidad, precio_base, moneda, margen, IVA. *Spec RF-44: el precio final no se persiste; sin rangos de cantidad.*
+  - [x] Implementar `HistorialCambioPrecio` (`pricing_historial_cambio_precio`): item_matriz, precio_anterior, precio_nuevo, usuario, cambiado_en. Append-only.
+- [x] **Módulo `hr`:**
+  - [x] Implementar `Trabajador` (`hr_trabajador`): nombre_completo, cargo (`IMPRESOR`, `VENDEDOR`, `DISENADOR`, `PLANCHADOR`, `CONFECCIONADOR`), telefono, correo, fecha_ingreso, usuario (ref. débil opcional a `core.Usuario`). *Spec 06.9 / RF-48.*
+  - [x] Implementar `TrabajadorLocal` (`hr_trabajador_local`): trabajador, local, es_principal (uno por trabajador). *Comisión diferida con la nómina (RF-49).*
 
 #### 🌱 Seeders Iniciales (`database/seeders/04_seed_ventas_precios_rrhh.sql`)
-- [ ] Clientes base: Cliente genérico "Consumidor Final" y 2 clientes corporativos de prueba.
-- [ ] Parámetros base de fórmulas comerciales:
+- [x] Clientes base: Cliente genérico "Consumidor Final" y 2 clientes corporativos de prueba.
+- [x] Parámetros base de fórmulas comerciales:
   - Margen de ganancia: `1.30` (+30%).
   - Alícuota de impuesto: `0.16` (16% IVA).
-  - Factor de conversión estándar.
-- [ ] Matriz de precios inicial para prendas estándar y servicios de sublimación por metro.
-- [ ] Fichas de trabajadores y vendedores asignados a los locales L01, L02 y L03.
+  - Factor de conversión estándar: *no aplica en `pricing`; la conversión USD/Bs usa `core.TasaCambio`.*
+  - *Requiere un usuario `admin` (seeder de núcleo); si no existe se omite con aviso y basta re-ejecutar.*
+- [x] Matriz de precios inicial para prendas estándar y servicios de sublimación por metro.
+- [x] Fichas de trabajadores y vendedores asignados a los locales L01, L02 y L03.
 
 ---
 
