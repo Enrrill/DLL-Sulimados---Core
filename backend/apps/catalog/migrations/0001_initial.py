@@ -12,6 +12,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(
+            sql="CREATE SCHEMA IF NOT EXISTS catalogo;",
+            reverse_sql="DROP SCHEMA IF EXISTS catalogo CASCADE;",
+        ),
         migrations.CreateModel(
             name='Talla',
             fields=[
@@ -26,7 +30,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'talla',
                 'verbose_name_plural': 'tallas',
-                'db_table': 'catalog_talla',
+                'db_table': 'catalogo.talla',
                 'ordering': ['orden', 'codigo'],
             },
         ),
@@ -44,7 +48,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'unidad de medida',
                 'verbose_name_plural': 'unidades de medida',
-                'db_table': 'catalog_unidad_medida',
+                'db_table': 'catalogo.unidad_medida',
                 'ordering': ['codigo'],
             },
         ),
@@ -61,7 +65,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'categoría',
                 'verbose_name_plural': 'categorías',
-                'db_table': 'catalog_categoria',
+                'db_table': 'catalogo.categoria',
                 'ordering': ['tipo', 'nombre'],
                 'constraints': [models.UniqueConstraint(fields=('nombre', 'tipo'), name='catalog_categoria_uk')],
             },
@@ -79,7 +83,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'subcategoría',
                 'verbose_name_plural': 'subcategorías',
-                'db_table': 'catalog_subcategoria',
+                'db_table': 'catalogo.subcategoria',
                 'ordering': ['categoria', 'nombre'],
             },
         ),
@@ -99,7 +103,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'producto',
                 'verbose_name_plural': 'productos',
-                'db_table': 'catalog_producto',
+                'db_table': 'catalogo.producto',
                 'ordering': ['nombre'],
             },
         ),
@@ -117,7 +121,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'servicio',
                 'verbose_name_plural': 'servicios',
-                'db_table': 'catalog_servicio',
+                'db_table': 'catalogo.servicio',
                 'ordering': ['nombre'],
             },
         ),
@@ -138,7 +142,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'material',
                 'verbose_name_plural': 'materiales',
-                'db_table': 'catalog_material',
+                'db_table': 'catalogo.material',
                 'ordering': ['nombre'],
             },
         ),
@@ -158,7 +162,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'variante de producto',
                 'verbose_name_plural': 'variantes de producto',
-                'db_table': 'catalog_variante_producto',
+                'db_table': 'catalogo.variante_producto',
                 'ordering': ['producto', 'sku'],
             },
         ),
