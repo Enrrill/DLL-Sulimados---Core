@@ -1,0 +1,162 @@
+-- =============================================================================
+-- 05_compras.sql
+-- DDL para el módulo de compras (abastecimiento):
+-- Empresas, Proveedores, Órdenes de Compra y sus líneas, Recepciones,
+-- Facturas de Compra e Historial de Precios por proveedor.
+--
+-- Referencias:
+--   docs/ddl/06b.5-compras.md
+--   docs/modelo-datos/06.5-compras.md
+--   tasks/tareas-grupo-base-de-datos.md
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS purchasing_empresa (
+    id             BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre         VARCHAR(150)  NOT NULL,
+    rif            VARCHAR(20)   NOT NULL,
+    direccion      VARCHAR(200)  NOT NULL DEFAULT '',
+    telefono       VARCHAR(30)   NOT NULL DEFAULT '',
+    correo         VARCHAR(150)  NOT NULL DEFAULT '',
+    activo         BOOLEAN       NOT NULL DEFAULT true,
+    creado_en      TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    actualizado_en TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    CONSTRAINT purchasing_empresa_rif_uk UNIQUE (rif)
+);
+
+-- Un proveedor es el punto de contacto de una empresa (RF-25)
+CREATE TABLE IF NOT EXISTS purchasing_proveedor (
+    id                     BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    empresa_id             BIGINT       NOT NULL REFERENCES purchasing_empresa(id) ON DELETE RESTRICT,
+    persona_contacto       VARCHAR(100) NOT NULL,
+    telefono               VARCHAR(30)  NOT NULL DEFAULT '',
+    correo                 VARCHAR(150) NOT NULL DEFAULT '',
+    moneda_predeterminada  VARCHAR(3)   NOT NULL DEFAULT 'USD',
+    condiciones_pago       VARCHAR(200) NOT NULL DEFAULT '',
+    calificacion           SMALLINT     NULL,
+    activo                 BOOLEAN      NOT NULL DEFAULT true,
+    creado_en              TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    actualizado_en         TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    CONSTRAINT purchasing_proveedor_calif_ck
+        CHECK (calificacion IS NULL OR (calificacion >= 1 AND calificacion <= 5)),
+    CONSTRAINT purchasing_proveedor_moneda_ck
+        CHECK (moneda_predeterminada IN ('USD', 'VES'))
+);
+CREATE INDEX IF NOT EXISTS purchasing_prov_empresa_idx
+    ON purchasing_proveedor (empresa_id, activo);
+
+CREATE TABLE IF NOT EXISTS purchasing_orden_compra (
+    id             BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    numero_orden   VARCHAR(30)   NULL,
+    proveedor_id   BIGINT        NOT NULL REFERENCES purchasing_proveedor(id) ON DELETE RESTRICT,
+    local_id       BIGINT        NOT NULL REFERENCES locales(id) ON DELETE RESTRICT,
+    estado         VARCHAR(20)   NOT NULL DEFAULT 'BORRADOR',
+    total          NUMERIC(14, 2) NOT NULL DEFAULT 0,
+    moneda         VARCHAR(3)    NOT NULL DEFAULT 'USD',
+    fecha_emision  DATE          NOT NULL DEFAULT CURRENT_DATE,
+    fecha_envio    DATE          NULL,
+    activo         BOOLEAN       NOT NULL DEFAULT true,
+    creado_en      TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    actualizado_en TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    CONSTRAINT purchasing_orden_compra_numero_uk UNIQUE (numero_orden),
+    CONSTRAINT purchasing_oc_total_ck CHECK (total >= 0),
+    CONSTRAINT purchasing_oc_estado_ck
+        CHECK (estado IN ('BORRADOR', 'ENVIADA', 'PARCIAL', 'RECIBIDA', 'CERRADA', 'ANULADA')),
+    CONSTRAINT purchasing_oc_moneda_ck CHECK (moneda IN ('USD', 'VES'))
+);
+CREATE INDEX IF NOT EXISTS purchasing_oc_local_estado_idx
+    ON purchasing_orden_compra (local_id, estado);
+
+CREATE TABLE IF NOT EXISTS purchasing_linea_orden (
+    id                  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    orden_compra_id     BIGINT        NOT NULL REFERENCES purchasing_orden_compra(id) ON DELETE CASCADE,
+    material_id         BIGINT        NOT NULL REFERENCES catalog_material(id) ON DELETE RESTRICT,
+    unidad_medida_id    BIGINT        NOT NULL REFERENCES catalog_unidad_medida(id) ON DELETE RESTRICT,
+    cantidad_solicitada NUMERIC(12, 4) NOT NULL,
+    cantidad_recibida   NUMERIC(12, 4) NOT NULL DEFAULT 0,
+    precio_unitario     NUMERIC(14, 2) NOT NULL,
+    moneda              VARCHAR(3)    NOT NULL DEFAULT 'USD',
+    activo              BOOLEAN       NOT NULL DEFAULT true,
+    creado_en           TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    actualizado_en      TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    CONSTRAINT purchasing_linea_solicitada_ck CHECK (cantidad_solicitada > 0),
+    CONSTRAINT purchasing_linea_recibida_ck CHECK (cantidad_recibida >= 0),
+    CONSTRAINT purchasing_linea_max_ck CHECK (cantidad_recibida <= cantidad_solicitada),
+    CONSTRAINT purchasing_linea_precio_ck CHECK (precio_unitario >= 0),
+    CONSTRAINT purchasing_linea_moneda_ck CHECK (moneda IN ('USD', 'VES'))
+);
+CREATE INDEX IF NOT EXISTS purchasing_linea_orden_idx
+    ON purchasing_linea_orden (orden_compra_id);
+
+-- La recepción es el evento que dispara la entrada al stock (RF-26)
+CREATE TABLE IF NOT EXISTS purchasing_recepcion_compra (
+    id                    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    orden_compra_id       BIGINT        NOT NULL REFERENCES purchasing_orden_compra(id) ON DELETE RESTRICT,
+    local_id              BIGINT        NOT NULL REFERENCES locales(id) ON DELETE RESTRICT,
+    estado                VARCHAR(20)   NOT NULL DEFAULT 'PENDIENTE',
+    fecha_recepcion       DATE          NOT NULL DEFAULT CURRENT_DATE,
+    numero_guia_proveedor VARCHAR(50)   NOT NULL DEFAULT '',
+    observacion           VARCHAR(300)  NOT NULL DEFAULT '',
+    activo                BOOLEAN       NOT NULL DEFAULT true,
+    creado_en             TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    actualizado_en        TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    CONSTRAINT purchasing_recep_estado_ck
+        CHECK (estado IN ('PENDIENTE', 'TOTAL', 'PARCIAL', 'ANULADA'))
+);
+CREATE INDEX IF NOT EXISTS purchasing_recep_ord_est_idx
+    ON purchasing_recepcion_compra (orden_compra_id, estado);
+
+CREATE TABLE IF NOT EXISTS purchasing_linea_recepcion (
+    id                    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    recepcion_compra_id   BIGINT        NOT NULL REFERENCES purchasing_recepcion_compra(id) ON DELETE CASCADE,
+    linea_orden_compra_id BIGINT        NOT NULL REFERENCES purchasing_linea_orden(id) ON DELETE RESTRICT,
+    cantidad_recibida     NUMERIC(12, 4) NOT NULL,
+    unidad_medida_id      BIGINT        NOT NULL REFERENCES catalog_unidad_medida(id) ON DELETE RESTRICT,
+    lote_id               BIGINT        NULL REFERENCES inventory_lote(id) ON DELETE RESTRICT,
+    activo                BOOLEAN       NOT NULL DEFAULT true,
+    creado_en             TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    actualizado_en        TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    CONSTRAINT purchasing_linea_recep_cantidad_ck CHECK (cantidad_recibida > 0)
+);
+CREATE INDEX IF NOT EXISTS purchasing_linea_recepcion_idx
+    ON purchasing_linea_recepcion (recepcion_compra_id);
+
+CREATE TABLE IF NOT EXISTS purchasing_factura_compra (
+    id                  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    proveedor_id        BIGINT        NOT NULL REFERENCES purchasing_proveedor(id) ON DELETE RESTRICT,
+    orden_compra_id     BIGINT        NULL REFERENCES purchasing_orden_compra(id) ON DELETE RESTRICT,
+    recepcion_compra_id BIGINT        NULL REFERENCES purchasing_recepcion_compra(id) ON DELETE RESTRICT,
+    numero_externo      VARCHAR(50)   NOT NULL DEFAULT '',
+    fecha_emision       DATE          NOT NULL DEFAULT CURRENT_DATE,
+    total               NUMERIC(14, 2) NOT NULL,
+    moneda              VARCHAR(3)    NOT NULL DEFAULT 'USD',
+    tasa_aplicada_id    BIGINT        NULL REFERENCES core_tasa_cambio(id) ON DELETE RESTRICT,
+    ruta_archivo        VARCHAR(500)  NOT NULL DEFAULT '',
+    activo              BOOLEAN       NOT NULL DEFAULT true,
+    creado_en           TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    actualizado_en      TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    CONSTRAINT purchasing_fact_total_ck CHECK (total >= 0),
+    CONSTRAINT purchasing_fact_moneda_ck CHECK (moneda IN ('USD', 'VES'))
+);
+CREATE INDEX IF NOT EXISTS purchasing_fact_prov_fecha_idx
+    ON purchasing_factura_compra (proveedor_id, fecha_emision);
+CREATE INDEX IF NOT EXISTS purchasing_fact_mon_fecha_idx
+    ON purchasing_factura_compra (moneda, fecha_emision);
+
+-- Base del comparador de precios por proveedor (RF-28)
+CREATE TABLE IF NOT EXISTS purchasing_historial_precio (
+    id               BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    proveedor_id     BIGINT        NOT NULL REFERENCES purchasing_proveedor(id) ON DELETE RESTRICT,
+    empresa_id       BIGINT        NOT NULL REFERENCES purchasing_empresa(id) ON DELETE RESTRICT,
+    material_id      BIGINT        NOT NULL REFERENCES catalog_material(id) ON DELETE RESTRICT,
+    unidad_medida_id BIGINT        NOT NULL REFERENCES catalog_unidad_medida(id) ON DELETE RESTRICT,
+    precio_unitario  NUMERIC(14, 2) NOT NULL,
+    moneda           VARCHAR(3)    NOT NULL DEFAULT 'USD',
+    registrado_en    TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    activo           BOOLEAN       NOT NULL DEFAULT true,
+    creado_en        TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    actualizado_en   TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    CONSTRAINT purchasing_hist_precio_ck CHECK (precio_unitario >= 0),
+    CONSTRAINT purchasing_hist_moneda_ck CHECK (moneda IN ('USD', 'VES'))
+);
+CREATE INDEX IF NOT EXISTS purchasing_hist_precio_idx
+    ON purchasing_historial_precio (material_id, proveedor_id, registrado_en DESC);
