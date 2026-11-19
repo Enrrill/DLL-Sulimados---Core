@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(
+            sql="CREATE SCHEMA IF NOT EXISTS inventario;",
+            reverse_sql="DROP SCHEMA IF EXISTS inventario CASCADE;",
+        ),
         migrations.CreateModel(
             name='GuiaTransferencia',
             fields=[
@@ -30,7 +34,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'guía de transferencia',
                 'verbose_name_plural': 'guías de transferencia',
-                'db_table': 'inventory_guia_transferencia',
+                'db_table': 'inventario.guia_transferencia',
                 'ordering': ['-creado_en'],
             },
         ),
@@ -54,7 +58,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'lote',
                 'verbose_name_plural': 'lotes',
-                'db_table': 'inventory_lote',
+                'db_table': 'inventario.lote',
                 'ordering': ['-fecha_ingreso', 'numero_lote'],
             },
         ),
@@ -75,7 +79,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'línea de guía',
                 'verbose_name_plural': 'líneas de guía',
-                'db_table': 'inventory_linea_guia',
+                'db_table': 'inventario.linea_guia_transferencia',
                 'ordering': ['creado_en'],
             },
         ),
@@ -94,7 +98,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'movimiento de stock',
                 'verbose_name_plural': 'movimientos de stock',
-                'db_table': 'inventory_movimiento_stock',
+                'db_table': 'inventario.movimiento_stock',
                 'ordering': ['-creado_en'],
             },
         ),
@@ -113,7 +117,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'nivel mínimo',
                 'verbose_name_plural': 'niveles mínimos',
-                'db_table': 'inventory_nivel_minimo',
+                'db_table': 'inventario.nivel_minimo',
                 'ordering': ['local'],
             },
         ),
@@ -133,7 +137,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'stock',
                 'verbose_name_plural': 'stocks',
-                'db_table': 'inventory_stock',
+                'db_table': 'inventario.stock',
                 'ordering': ['-actualizado_en'],
             },
         ),
