@@ -113,6 +113,16 @@ ASGI_APPLICATION = "backend.config.asgi.application"
 # ============================================================
 # Base de datos (PostgreSQL 14+ / Neon)
 # ============================================================
+# Django no admite Meta.db_table con esquema ("nucleo.usuario"): lo cita como
+# un único identificador y deriva de él los nombres auto-generados de índices
+# y restricciones. El backend propio backend.common.pgschema corrige eso más
+# la introspección y el renombrado de tablas. El parche de identificadores se
+# aplica aquí para que esté activo antes de cargar los modelos (los índices
+# sin nombre se autodenominan al definir la clase).
+from backend.common.pgschema import patch_split_identifier  # noqa: E402
+
+patch_split_identifier()
+
 # Prioridad 1: DATABASE_URL (Neon — pooler PgBouncer).
 # Prioridad 2: DB_ENGINE=sqlite3 (pruebas rápidas locales).
 # Prioridad 3: Variables sueltas DB_* (PostgreSQL local sin Neon).
@@ -149,6 +159,11 @@ else:
             "PORT": os.environ.get("DB_PORT", "5432"),
         }
     }
+
+# Sustituir el motor de Django por el backend propio cuando se usa PostgreSQL
+# (añade esquemas por módulo; SQLite no se toca).
+if DATABASES["default"]["ENGINE"] == "django.db.backends.postgresql":
+    DATABASES["default"]["ENGINE"] = "backend.common.pgschema"
 
 # ============================================================
 # Password validation
