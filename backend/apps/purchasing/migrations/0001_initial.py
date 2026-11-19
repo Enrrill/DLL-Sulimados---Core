@@ -16,6 +16,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(
+            sql="CREATE SCHEMA IF NOT EXISTS compras;",
+            reverse_sql=migrations.RunSQL.noop,
+        ),
         migrations.CreateModel(
             name='Empresa',
             fields=[
@@ -32,7 +36,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'empresa',
                 'verbose_name_plural': 'empresas',
-                'db_table': 'purchasing_empresa',
+                'db_table': 'compras.empresa',
                 'ordering': ['nombre'],
             },
         ),
@@ -54,7 +58,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'orden de compra',
                 'verbose_name_plural': 'órdenes de compra',
-                'db_table': 'purchasing_orden_compra',
+                'db_table': 'compras.orden_compra',
                 'ordering': ['-fecha_emision', '-creado_en'],
             },
         ),
@@ -76,7 +80,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'línea de orden de compra',
                 'verbose_name_plural': 'líneas de orden de compra',
-                'db_table': 'purchasing_linea_orden',
+                'db_table': 'compras.linea_orden_compra',
                 'ordering': ['id'],
             },
         ),
@@ -98,7 +102,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'proveedor',
                 'verbose_name_plural': 'proveedores',
-                'db_table': 'purchasing_proveedor',
+                'db_table': 'compras.proveedor',
                 'ordering': ['persona_contacto'],
             },
         ),
@@ -125,7 +129,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'historial de precio de proveedor',
                 'verbose_name_plural': 'historiales de precios de proveedores',
-                'db_table': 'purchasing_historial_precio',
+                'db_table': 'compras.historial_precio_proveedor',
                 'ordering': ['-registrado_en'],
             },
         ),
@@ -146,7 +150,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'recepción de compra',
                 'verbose_name_plural': 'recepciones de compra',
-                'db_table': 'purchasing_recepcion_compra',
+                'db_table': 'compras.recepcion_compra',
                 'ordering': ['-fecha_recepcion', '-creado_en'],
             },
         ),
@@ -166,7 +170,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'línea de recepción',
                 'verbose_name_plural': 'líneas de recepción',
-                'db_table': 'purchasing_linea_recepcion',
+                'db_table': 'compras.linea_recepcion_compra',
                 'ordering': ['id'],
             },
         ),
@@ -190,7 +194,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'factura de compra',
                 'verbose_name_plural': 'facturas de compra',
-                'db_table': 'purchasing_factura_compra',
+                'db_table': 'compras.factura_compra',
                 'ordering': ['-fecha_emision', '-creado_en'],
             },
         ),
