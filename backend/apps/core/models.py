@@ -30,7 +30,7 @@ class Local(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "local"
         verbose_name_plural = "locales"
-        db_table = "locales"
+        db_table = "nucleo.local"
 
     def __str__(self):
         return f"{self.codigo} - {self.nombre}"
@@ -102,7 +102,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin, TimeStampedModel, ActivoMixin)
     class Meta:
         verbose_name = "usuario"
         verbose_name_plural = "usuarios"
-        db_table = "usuarios"
+        db_table = "nucleo.usuario"
 
     def __str__(self):
         return f"{self.nombre_usuario} ({self.get_rol_display()})"
@@ -129,7 +129,7 @@ class TasaCambio(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "tasa de cambio"
         verbose_name_plural = "tasas de cambio"
-        db_table = "core_tasa_cambio"
+        db_table = "nucleo.tasa_cambio"
         ordering = ["-fecha_vigencia", "-creado_en"]
         indexes = [
             models.Index(
@@ -166,7 +166,7 @@ class ContadorCorrelativo(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "contador correlativo"
         verbose_name_plural = "contadores correlativos"
-        db_table = "core_contador_correlativo"
+        db_table = "nucleo.contador_correlativo"
         constraints = [
             models.UniqueConstraint(
                 fields=["tipo_comprobante", "local", "anio"],
