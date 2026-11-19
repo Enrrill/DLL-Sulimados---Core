@@ -142,27 +142,35 @@ Documento operativo para la distribución del trabajo del **Grupo de Base de Dat
 - `database/06_produccion.sql`
 - `database/seeders/03_seed_compras_produccion.sql`
 
+> **Nota de implementación:** donde esta lista difiere de la especificación oficial
+> (`docs/03` RF-25 a RF-35, `docs/modelo-datos/06.5`–`06.6`, `docs/ddl/06b.5`–`06b.6`),
+> se siguió la especificación oficial: el enunciado original se conserva con nombres
+> canónicos bajo sus esquemas (`compras.*`, `produccion.*`) y la divergencia se anota
+> en cursiva al final de cada punto. Moneda `USD`/`VES` y estados en MAYÚSCULA,
+> alineados con `inventory`.
+
 #### 📝 Tareas de Modelado y DDL
-- [ ] **Módulo `purchasing`:**
-  - [ ] Implementar `Empresa` y `Proveedor` (`purchasing_empresa`, `purchasing_proveedor`): rif, razon_social, direccion, telefono, contacto, calificacion.
-  - [ ] Implementar `HistorialPrecioProveedor` (`purchasing_historial_precio`): proveedor, material/producto, precio_unitario, moneda, fecha.
-  - [ ] Implementar `OrdenCompra` y `LineaOrdenCompra` (`purchasing_orden_compra`, `purchasing_linea_orden`): numero_orden, proveedor, local_destino (`ForeignKey('core.Local')`), estado (`SOLICITADA`, `APROBADA`, `RECIBIDA`, `CANCELADA`), moneda, total.
-  - [ ] Implementar `RecepcionCompra` y `LineaRecepcionCompra`: orden_compra, local, fecha_recepcion, numero_guia_proveedor, observaciones.
-  - [ ] Implementar `FacturaCompra`: proveedor, numero_factura_control, fecha_emision, monto_total, tasa_cambio_aplicada.
-- [ ] **Módulo `production`:**
-  - [ ] Implementar `Maquina` (`production_maquina`): codigo, nombre, tipo (`PLOTTER`, `CALANDRA`, `PLANCHA_TRANSFER`, `COSTURA_RECTA`, `OVERLOCK`), local (`ForeignKey('core.Local')`), horas_operativas, estado (`OPERATIVA`, `EN_MANTENIMIENTO`, `FUERA_SERVICIO`).
-  - [ ] Implementar `OrdenProduccion` (`production_orden_produccion`): codigo_correlativo, pedido_venta_id (opcional), producto (`ForeignKey('catalog.Producto')`), cantidad, fecha_inicio, fecha_compromiso, estado (`PLANIFICADA`, `EN_PROCESO`, `PAUSADA`, `TERMINADA`, `CANCELADA`).
-  - [ ] Implementar `PasoProduccion` (`production_paso_produccion`): orden_produccion, orden_secuencia (1, 2, 3), local_ejecucion (`ForeignKey('core.Local')` - ej. L1 corte, L2 planchado), descripcion_tarea, estado (`PENDIENTE`, `EN_PROCESO`, `COMPLETADO`).
-  - [ ] Implementar `ConsumoMaterial` (`production_consumo_material`): paso_produccion, lote (`ForeignKey('inventory.Lote')`), cantidad_consumida, es_desperdicio (boolean), motivo_merma.
-  - [ ] Implementar `OperacionMaquina` (`production_operacion_maquina`): maquina, paso_produccion, operador (`ForeignKey('core.Usuario')`), hora_inicio, hora_fin, resultado.
+- [x] **Módulo `purchasing`:**
+  - [x] Implementar `Empresa` y `Proveedor` (`compras.empresa`, `compras.proveedor`): rif, razon_social, direccion, telefono, contacto, calificacion. *Spec 06.5: `nombre` en vez de razon_social, `persona_contacto` en vez de contacto, `moneda_predeterminada` (USD/VES) y `condiciones_pago`.*
+  - [x] Implementar `HistorialPrecioProveedor` (`compras.historial_precio_proveedor`): proveedor, material/producto, precio_unitario, moneda, fecha. *Spec 06.5 / RF-28: `empresa` heredada para agrupar por vendedor, `material` (`catalog.Material`), `unidad_medida`, `registrado_en` (`auto_now_add`).*
+  - [x] Implementar `OrdenCompra` y `LineaOrdenCompra` (`compras.orden_compra`, `compras.linea_orden_compra`): numero_orden, proveedor, local_destino (`ForeignKey('core.Local')`), estado (`SOLICITADA`, `APROBADA`, `RECIBIDA`, `CANCELADA`), moneda, total. *Spec 06b.5 / RF-26: estados `BORRADOR`, `ENVIADA`, `PARCIAL`, `RECIBIDA`, `CERRADA`, `ANULADA`; líneas con `cantidad_solicitada`, `cantidad_recibida` y `precio_unitario`.*
+  - [x] Implementar `RecepcionCompra` y `LineaRecepcionCompra` (`compras.recepcion_compra`, `compras.linea_recepcion_compra`): orden_compra, local, fecha_recepcion, numero_guia_proveedor, observaciones. *Spec 06b.5: estado (`PENDIENTE`, `TOTAL`, `PARCIAL`, `ANULADA`), `observacion`; línea con `lote` opcional para materiales continuos.*
+  - [x] Implementar `FacturaCompra` (`compras.factura_compra`): proveedor, numero_factura_control, fecha_emision, monto_total, tasa_cambio_aplicada. *Spec 06.5 / RF-27/29: `numero_externo`, `orden_compra` y `recepcion_compra` opcionales, `tasa_aplicada` (`core.TasaCambio`), `ruta_archivo` para adjunto.*
+- [x] **Módulo `production`:**
+  - [x] Implementar `Maquina` (`produccion.maquina`): codigo, nombre, tipo (`PLOTTER`, `CALANDRA`, `PLANCHA_TRANSFER`, `COSTURA_RECTA`, `OVERLOCK`), local (`ForeignKey('core.Local')`), horas_operativas, estado (`OPERATIVA`, `EN_MANTENIMIENTO`, `FUERA_SERVICIO`). *Spec 06b.6: tipo (`IMPRESORA`, `PLANCHA`, `CORTADORA`, `OTRO`), estado (`OPERATIVA`, `MANTENIMIENTO`, `INACTIVA`).*
+  - [x] Implementar `OrdenProduccion` (`produccion.orden_produccion`): codigo_correlativo, pedido_venta_id (opcional), producto (`ForeignKey('catalog.Producto')`), cantidad, fecha_inicio, fecha_compromiso, estado (`PLANIFICADA`, `EN_PROCESO`, `PAUSADA`, `TERMINADA`, `CANCELADA`). *Spec 06.6 / RF-30/35: `codigo`, `variante` (`catalog.VarianteProducto`), `local_origen`, `fecha_limite`, estados `CREADA`, `EN_PRODUCCION`, `TERMINADA`, `ANULADA`; costeo de cierre obligatorio (`costo_materiales`, `costo_horas`, `costo_total`, `fecha_cierre`).*
+  - [x] Implementar `PasoProduccion` (`produccion.paso_produccion`): orden_produccion, orden_secuencia (1, 2, 3), local_ejecucion (`ForeignKey('core.Local')` - ej. L1 corte, L2 planchado), descripcion_tarea, estado (`PENDIENTE`, `EN_PROCESO`, `COMPLETADO`). *Spec 06.6 / RF-31: `orden_paso`, `local`, `trabajador` asignable (`hr.Trabajador`), tipo (`IMPRESION`, `CORTE`, `PLANCHADO`, `CONFECCION`, `DISENO`), estados `PENDIENTE`, `EN_PROCESO`, `TERMINADO`.*
+  - [x] Implementar `ConsumoMaterial` (`produccion.consumo_material`): paso_produccion, lote (`ForeignKey('inventory.Lote')`), cantidad_consumida, es_desperdicio (boolean), motivo_merma. *Spec 06b.6 / RF-32/34: tipo (`USO`, `DESPERDICIO`), exclusión mutua estricta `lote` XOR `stock`, `motivo_desperdicio` obligatorio al ser desperdicio, traza débil `movimiento_stock_id`. Hereda `TimeStampedModel` y `ActivoMixin`.*
+  - [x] Implementar `OperacionMaquina` (`produccion.operacion_maquina`): maquina, paso_produccion, operador (`ForeignKey('core.Usuario')`), hora_inicio, hora_fin, resultado. *Spec 06.6 / RF-33: `operador_trabajador` (`hr.Trabajador`), `duracion_minutos` y resultado (`COMPLETADO`, `DEFECTUOSO`, `PARCIAL`).*
 
 #### 🌱 Seeders Iniciales (`database/seeders/03_seed_compras_produccion.sql`)
-- [ ] Proveedores de insumos registrados (telas, tintas, repuestos plóter).
-- [ ] Parque de máquinas asignadas a cada local:
+- [x] Proveedores de insumos registrados (telas, tintas, repuestos plóter).
+- [x] Parque de máquinas asignadas a cada local:
   - **L01:** Plóter de Sublimación Mimaki/Epson 1.60m, Cortadora Láser Textil.
   - **L02:** Plancha Térmica Industrial 80x100cm, Máquina de Coser Overlock 5 Hilos, Máquina Recta.
   - **L03:** Estampadora Combo 8 en 1 (Gorras, Tazas, Platos), Plancha de Transfer manual.
-- [ ] Datos de prueba de órdenes de compra y órdenes de producción piloto demostrando el salto de ruta multi-local L1 $\rightarrow$ L2.
+- [x] Datos de prueba de órdenes de compra y órdenes de producción piloto demostrando el salto de ruta multi-local L1 $\rightarrow$ L2.
+- [ ] Carga en una BD limpia: *pendiente de la ejecución secuencial completa con seeders de núcleo (01) y catálogo (02).*
 
 ---
 
