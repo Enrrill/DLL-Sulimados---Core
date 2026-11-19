@@ -16,6 +16,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(
+            sql="CREATE SCHEMA IF NOT EXISTS rrhh;",
+            reverse_sql=migrations.RunSQL.noop,
+        ),
         migrations.CreateModel(
             name='Trabajador',
             fields=[
@@ -33,7 +37,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'trabajador',
                 'verbose_name_plural': 'trabajadores',
-                'db_table': 'hr_trabajador',
+                'db_table': 'rrhh.trabajador',
                 'ordering': ['nombre_completo'],
             },
         ),
@@ -51,13 +55,17 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'asignación de trabajador a local',
                 'verbose_name_plural': 'asignaciones de trabajadores a locales',
-                'db_table': 'hr_trabajador_local',
+                'db_table': 'rrhh.trabajador_local',
                 'ordering': ['trabajador', '-es_principal', 'local'],
             },
         ),
         migrations.AddIndex(
             model_name='trabajador',
             index=models.Index(condition=models.Q(('activo', True)), fields=['cargo'], name='hr_trabajador_cargo_idx'),
+        ),
+        migrations.AddConstraint(
+            model_name='trabajador',
+            constraint=models.CheckConstraint(condition=models.Q(('cargo__in', ['IMPRESOR', 'VENDEDOR', 'DISENADOR', 'PLANCHADOR', 'CONFECCIONADOR'])), name='hr_trabajador_cargo_ck'),
         ),
         migrations.AddConstraint(
             model_name='trabajadorlocal',
