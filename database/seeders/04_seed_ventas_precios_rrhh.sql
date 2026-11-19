@@ -23,7 +23,7 @@ BEGIN;
 -- 1. Clientes base (RF-36): el genérico "Consumidor Final" (sin RIF) y dos
 --    clientes corporativos de prueba.
 -- -----------------------------------------------------------------------------
-INSERT INTO sales_cliente (nombre, telefono, correo, rif, activo, creado_en, actualizado_en)
+INSERT INTO ventas.cliente (nombre, telefono, correo, rif, activo, creado_en, actualizado_en)
 SELECT v.nombre, v.telefono, v.correo, v.rif, true, now(), now()
 FROM (VALUES
     ('Consumidor Final',                 '',              '',                          NULL),
@@ -31,7 +31,7 @@ FROM (VALUES
     ('Eventos y Promociones Andina C.A.','0274-555-0202', 'pedidos@andina.example',    'J-30987654-1')
 ) AS v (nombre, telefono, correo, rif)
 WHERE NOT EXISTS (
-    SELECT 1 FROM sales_cliente c
+    SELECT 1 FROM ventas.cliente c
     WHERE c.nombre = v.nombre AND c.rif IS NOT DISTINCT FROM v.rif
 );
 
@@ -39,17 +39,17 @@ WHERE NOT EXISTS (
 -- 2. Parámetro vigente de la fórmula comercial (RF-45):
 --    margen 1.30 (+30 %) e IVA 0.16 (16 %), sin fecha de fin.
 -- -----------------------------------------------------------------------------
-INSERT INTO pricing_parametro_formula
+INSERT INTO precios.parametro_formula
     (porcentaje_margen, porcentaje_iva, fecha_desde, fecha_hasta, registrado_por_id,
      activo, creado_en, actualizado_en)
 SELECT 1.3000, 0.1600, DATE '2026-01-01', NULL, u.id, true, now(), now()
-FROM (SELECT id FROM usuarios WHERE rol = 'admin' ORDER BY id LIMIT 1) AS u
+FROM (SELECT id FROM nucleo.usuario WHERE rol = 'admin' ORDER BY id LIMIT 1) AS u
 ON CONFLICT (fecha_desde) DO NOTHING;
 
 DO $$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM usuarios WHERE rol = 'admin') THEN
-        RAISE NOTICE 'No hay usuario admin: se omitió pricing_parametro_formula. '
+    IF NOT EXISTS (SELECT 1 FROM nucleo.usuario WHERE rol = 'admin') THEN
+        RAISE NOTICE 'No hay usuario admin: se omitió precios.parametro_formula. '
                      'Ejecute de nuevo este seeder tras crear el administrador.';
     END IF;
 END $$;
@@ -57,12 +57,12 @@ END $$;
 -- -----------------------------------------------------------------------------
 -- 3. Servicio de sublimación por metro (necesario para la matriz).
 -- -----------------------------------------------------------------------------
-INSERT INTO catalog_servicio (nombre, descripcion, unidad_medida_id, activo, creado_en, actualizado_en)
+INSERT INTO catalogo.servicio (nombre, descripcion, unidad_medida_id, activo, creado_en, actualizado_en)
 SELECT 'Sublimación por metro',
        'Sublimación de tela por metro lineal (ancho 1.60 m).',
-       (SELECT id FROM catalog_unidad_medida WHERE codigo = 'm'),
+       (SELECT id FROM catalogo.unidad_medida WHERE codigo = 'm'),
        true, now(), now()
-WHERE NOT EXISTS (SELECT 1 FROM catalog_servicio WHERE nombre = 'Sublimación por metro');
+WHERE NOT EXISTS (SELECT 1 FROM catalogo.servicio WHERE nombre = 'Sublimación por metro');
 
 -- -----------------------------------------------------------------------------
 -- 4. Matriz de precios inicial (RF-44), en USD con margen 1.30 e IVA 0.16.
@@ -70,52 +70,52 @@ WHERE NOT EXISTS (SELECT 1 FROM catalog_servicio WHERE nombre = 'Sublimación po
 --    - Prendas estándar: franela, taza 11 oz (con su medida) y gorra.
 --    - Servicio de sublimación por metro sobre microdurazno.
 -- -----------------------------------------------------------------------------
-INSERT INTO pricing_item_matriz_precios
+INSERT INTO precios.item_matriz_precios
     (producto_id, variante_id, servicio_id, material_id, unidad_medida_id,
      medida_cantidad, unidad_medida_medida_id, precio_base, moneda,
      porcentaje_margen, porcentaje_iva, activo, creado_en, actualizado_en)
-SELECT p.id, NULL, NULL, NULL, (SELECT id FROM catalog_unidad_medida WHERE codigo = 'pza'),
+SELECT p.id, NULL, NULL, NULL, (SELECT id FROM catalogo.unidad_medida WHERE codigo = 'pza'),
        NULL, NULL, v.precio, 'USD', 1.3000, 0.1600, true, now(), now()
 FROM (VALUES
     ('PROD-001', 8.00),   -- Franela deportiva sublimada
     ('PROD-003', 6.00)    -- Gorra trucker
 ) AS v (codigo, precio)
-JOIN catalog_producto p ON p.codigo = v.codigo
+JOIN catalogo.producto p ON p.codigo = v.codigo
 WHERE NOT EXISTS (
-    SELECT 1 FROM pricing_item_matriz_precios i
+    SELECT 1 FROM precios.item_matriz_precios i
     WHERE i.producto_id = p.id AND i.material_id IS NULL AND i.medida_cantidad IS NULL
 );
 
 -- Taza 11 oz: la medida se guarda numérica (11) con su unidad (onza).
-INSERT INTO catalog_unidad_medida (codigo, nombre, permite_decimales, activo, creado_en, actualizado_en)
+INSERT INTO catalogo.unidad_medida (codigo, nombre, permite_decimales, activo, creado_en, actualizado_en)
 VALUES ('oz', 'Onza', true, true, now(), now())
 ON CONFLICT (codigo) DO NOTHING;
 
-INSERT INTO pricing_item_matriz_precios
+INSERT INTO precios.item_matriz_precios
     (producto_id, variante_id, servicio_id, material_id, unidad_medida_id,
      medida_cantidad, unidad_medida_medida_id, precio_base, moneda,
      porcentaje_margen, porcentaje_iva, activo, creado_en, actualizado_en)
-SELECT p.id, NULL, NULL, NULL, (SELECT id FROM catalog_unidad_medida WHERE codigo = 'pza'),
-       11, (SELECT id FROM catalog_unidad_medida WHERE codigo = 'oz'),
+SELECT p.id, NULL, NULL, NULL, (SELECT id FROM catalogo.unidad_medida WHERE codigo = 'pza'),
+       11, (SELECT id FROM catalogo.unidad_medida WHERE codigo = 'oz'),
        4.50, 'USD', 1.3000, 0.1600, true, now(), now()
-FROM catalog_producto p
+FROM catalogo.producto p
 WHERE p.codigo = 'PROD-002'
   AND NOT EXISTS (
-      SELECT 1 FROM pricing_item_matriz_precios i
+      SELECT 1 FROM precios.item_matriz_precios i
       WHERE i.producto_id = p.id AND i.medida_cantidad = 11
   );
 
-INSERT INTO pricing_item_matriz_precios
+INSERT INTO precios.item_matriz_precios
     (producto_id, variante_id, servicio_id, material_id, unidad_medida_id,
      medida_cantidad, unidad_medida_medida_id, precio_base, moneda,
      porcentaje_margen, porcentaje_iva, activo, creado_en, actualizado_en)
-SELECT NULL, NULL, s.id, m.id, (SELECT id FROM catalog_unidad_medida WHERE codigo = 'm'),
+SELECT NULL, NULL, s.id, m.id, (SELECT id FROM catalogo.unidad_medida WHERE codigo = 'm'),
        NULL, NULL, 3.50, 'USD', 1.3000, 0.1600, true, now(), now()
-FROM catalog_servicio s
-JOIN catalog_material m ON m.codigo = 'MAT-001'
+FROM catalogo.servicio s
+JOIN catalogo.material m ON m.codigo = 'MAT-001'
 WHERE s.nombre = 'Sublimación por metro'
   AND NOT EXISTS (
-      SELECT 1 FROM pricing_item_matriz_precios i
+      SELECT 1 FROM precios.item_matriz_precios i
       WHERE i.servicio_id = s.id AND i.material_id = m.id
   );
 
@@ -124,7 +124,7 @@ WHERE s.nombre = 'Sublimación por metro'
 --    Cargos según la especialidad de cada local: L01 imprime, L02 plancha y
 --    confecciona, L03 diseña; un vendedor por local.
 -- -----------------------------------------------------------------------------
-INSERT INTO hr_trabajador
+INSERT INTO rrhh.trabajador
     (nombre_completo, cargo, telefono, correo, fecha_ingreso, usuario_id,
      activo, creado_en, actualizado_en)
 SELECT v.nombre, v.cargo, '', '', DATE '2026-01-05', NULL, true, now(), now()
@@ -137,9 +137,9 @@ FROM (VALUES
     ('Vendedor Sucursal 3',    'VENDEDOR'),
     ('Diseñador Sucursal 3',   'DISENADOR')
 ) AS v (nombre, cargo)
-WHERE NOT EXISTS (SELECT 1 FROM hr_trabajador t WHERE t.nombre_completo = v.nombre);
+WHERE NOT EXISTS (SELECT 1 FROM rrhh.trabajador t WHERE t.nombre_completo = v.nombre);
 
-INSERT INTO hr_trabajador_local
+INSERT INTO rrhh.trabajador_local
     (trabajador_id, local_id, es_principal, activo, creado_en, actualizado_en)
 SELECT t.id, l.id, true, true, now(), now()
 FROM (VALUES
@@ -151,16 +151,16 @@ FROM (VALUES
     ('Vendedor Sucursal 3',       'L03'),
     ('Diseñador Sucursal 3',      'L03')
 ) AS v (nombre, local_codigo)
-JOIN hr_trabajador t ON t.nombre_completo = v.nombre
-JOIN locales l ON l.codigo = v.local_codigo
+JOIN rrhh.trabajador t ON t.nombre_completo = v.nombre
+JOIN nucleo.local l ON l.codigo = v.local_codigo
 ON CONFLICT (trabajador_id, local_id) DO NOTHING;
 
 -- El diseñador también apoya en L01 (asignación secundaria, multi-local).
-INSERT INTO hr_trabajador_local
+INSERT INTO rrhh.trabajador_local
     (trabajador_id, local_id, es_principal, activo, creado_en, actualizado_en)
 SELECT t.id, l.id, false, true, now(), now()
-FROM hr_trabajador t
-JOIN locales l ON l.codigo = 'L01'
+FROM rrhh.trabajador t
+JOIN nucleo.local l ON l.codigo = 'L01'
 WHERE t.nombre_completo = 'Diseñador Sucursal 3'
 ON CONFLICT (trabajador_id, local_id) DO NOTHING;
 
