@@ -57,7 +57,7 @@ class Maquina(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "máquina"
         verbose_name_plural = "máquinas"
-        db_table = "production_maquina"
+        db_table = "produccion.maquina"
         ordering = ["local", "codigo"]
         indexes = [
             models.Index(
@@ -139,7 +139,7 @@ class OrdenProduccion(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "orden de producción"
         verbose_name_plural = "órdenes de producción"
-        db_table = "production_orden_produccion"
+        db_table = "produccion.orden_produccion"
         ordering = ["-creado_en"]
         indexes = [
             models.Index(
@@ -228,7 +228,7 @@ class PasoProduccion(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "paso de producción"
         verbose_name_plural = "pasos de producción"
-        db_table = "production_paso_produccion"
+        db_table = "produccion.paso_produccion"
         ordering = ["orden_paso"]
         indexes = [
             models.Index(
@@ -263,7 +263,7 @@ class PasoProduccion(TimeStampedModel, ActivoMixin):
         return f"Paso {self.orden_paso} {self.get_tipo_display()} - {self.orden_produccion.codigo}"
 
 
-class ConsumoMaterial(models.Model):
+class ConsumoMaterial(TimeStampedModel, ActivoMixin):
     """Salida de material de un paso sobre lote o stock (RF-32, RF-34)."""
 
     paso = models.ForeignKey(
@@ -322,7 +322,7 @@ class ConsumoMaterial(models.Model):
     class Meta:
         verbose_name = "consumo de material"
         verbose_name_plural = "consumos de material"
-        db_table = "production_consumo_material"
+        db_table = "produccion.consumo_material"
         ordering = ["id"]
         indexes = [
             models.Index(
@@ -396,7 +396,7 @@ class OperacionMaquina(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "operación de máquina"
         verbose_name_plural = "operaciones de máquina"
-        db_table = "production_operacion_maquina"
+        db_table = "produccion.operacion_maquina"
         ordering = ["-creado_en"]
         indexes = [
             models.Index(

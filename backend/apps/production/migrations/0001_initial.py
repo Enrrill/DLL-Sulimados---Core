@@ -16,6 +16,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(
+            sql="CREATE SCHEMA IF NOT EXISTS produccion;",
+            reverse_sql=migrations.RunSQL.noop,
+        ),
         migrations.CreateModel(
             name='Maquina',
             fields=[
@@ -33,7 +37,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'máquina',
                 'verbose_name_plural': 'máquinas',
-                'db_table': 'production_maquina',
+                'db_table': 'produccion.maquina',
                 'ordering': ['local', 'codigo'],
             },
         ),
@@ -60,7 +64,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'orden de producción',
                 'verbose_name_plural': 'órdenes de producción',
-                'db_table': 'production_orden_produccion',
+                'db_table': 'produccion.orden_produccion',
                 'ordering': ['-creado_en'],
             },
         ),
@@ -84,7 +88,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'paso de producción',
                 'verbose_name_plural': 'pasos de producción',
-                'db_table': 'production_paso_produccion',
+                'db_table': 'produccion.paso_produccion',
                 'ordering': ['orden_paso'],
             },
         ),
@@ -105,7 +109,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'operación de máquina',
                 'verbose_name_plural': 'operaciones de máquina',
-                'db_table': 'production_operacion_maquina',
+                'db_table': 'produccion.operacion_maquina',
                 'ordering': ['-creado_en'],
             },
         ),
@@ -113,6 +117,9 @@ class Migration(migrations.Migration):
             name='ConsumoMaterial',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('creado_en', models.DateTimeField(auto_now_add=True)),
+                ('actualizado_en', models.DateTimeField(auto_now=True)),
+                ('activo', models.BooleanField(default=True)),
                 ('cantidad_consumida', models.DecimalField(decimal_places=4, max_digits=12, verbose_name='cantidad consumida')),
                 ('tipo', models.CharField(choices=[('USO', 'Uso'), ('DESPERDICIO', 'Desperdicio')], default='USO', max_length=20, verbose_name='tipo de consumo')),
                 ('motivo_desperdicio', models.CharField(blank=True, default='', help_text='Obligatorio cuando el consumo es desperdicio (RF-34)', max_length=200, verbose_name='motivo de desperdicio')),
@@ -125,7 +132,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'consumo de material',
                 'verbose_name_plural': 'consumos de material',
-                'db_table': 'production_consumo_material',
+                'db_table': 'produccion.consumo_material',
                 'ordering': ['id'],
             },
         ),
