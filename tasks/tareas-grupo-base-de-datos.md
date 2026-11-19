@@ -143,26 +143,26 @@ Documento operativo para la distribución del trabajo del **Grupo de Base de Dat
 - `database/seeders/03_seed_compras_produccion.sql`
 
 #### 📝 Tareas de Modelado y DDL
-- [ ] **Módulo `purchasing`:**
-  - [ ] Implementar `Empresa` y `Proveedor` (`purchasing_empresa`, `purchasing_proveedor`): rif, razon_social, direccion, telefono, contacto, calificacion.
-  - [ ] Implementar `HistorialPrecioProveedor` (`purchasing_historial_precio`): proveedor, material/producto, precio_unitario, moneda, fecha.
-  - [ ] Implementar `OrdenCompra` y `LineaOrdenCompra` (`purchasing_orden_compra`, `purchasing_linea_orden`): numero_orden, proveedor, local_destino (`ForeignKey('core.Local')`), estado (`SOLICITADA`, `APROBADA`, `RECIBIDA`, `CANCELADA`), moneda, total.
-  - [ ] Implementar `RecepcionCompra` y `LineaRecepcionCompra`: orden_compra, local, fecha_recepcion, numero_guia_proveedor, observaciones.
-  - [ ] Implementar `FacturaCompra`: proveedor, numero_factura_control, fecha_emision, monto_total, tasa_cambio_aplicada.
-- [ ] **Módulo `production`:**
-  - [ ] Implementar `Maquina` (`production_maquina`): codigo, nombre, tipo (`PLOTTER`, `CALANDRA`, `PLANCHA_TRANSFER`, `COSTURA_RECTA`, `OVERLOCK`), local (`ForeignKey('core.Local')`), horas_operativas, estado (`OPERATIVA`, `EN_MANTENIMIENTO`, `FUERA_SERVICIO`).
-  - [ ] Implementar `OrdenProduccion` (`production_orden_produccion`): codigo_correlativo, pedido_venta_id (opcional), producto (`ForeignKey('catalog.Producto')`), cantidad, fecha_inicio, fecha_compromiso, estado (`PLANIFICADA`, `EN_PROCESO`, `PAUSADA`, `TERMINADA`, `CANCELADA`).
-  - [ ] Implementar `PasoProduccion` (`production_paso_produccion`): orden_produccion, orden_secuencia (1, 2, 3), local_ejecucion (`ForeignKey('core.Local')` - ej. L1 corte, L2 planchado), descripcion_tarea, estado (`PENDIENTE`, `EN_PROCESO`, `COMPLETADO`).
-  - [ ] Implementar `ConsumoMaterial` (`production_consumo_material`): paso_produccion, lote (`ForeignKey('inventory.Lote')`), cantidad_consumida, es_desperdicio (boolean), motivo_merma.
-  - [ ] Implementar `OperacionMaquina` (`production_operacion_maquina`): maquina, paso_produccion, operador (`ForeignKey('core.Usuario')`), hora_inicio, hora_fin, resultado.
+- [x] **Módulo `purchasing`:**
+  - [x] Implementar `Empresa` y `Proveedor` (`purchasing_empresa`, `purchasing_proveedor`): rif, razon_social, direccion, telefono, contacto, calificacion.
+  - [x] Implementar `HistorialPrecioProveedor` (`purchasing_historial_precio`): proveedor, material/producto, precio_unitario, moneda, fecha.
+  - [x] Implementar `OrdenCompra` y `LineaOrdenCompra` (`purchasing_orden_compra`, `purchasing_linea_orden`): numero_orden, proveedor, local_destino (`ForeignKey('core.Local')`), estado (`SOLICITADA`, `APROBADA`, `RECIBIDA`, `CANCELADA`), moneda, total.
+  - [x] Implementar `RecepcionCompra` y `LineaRecepcionCompra`: orden_compra, local, fecha_recepcion, numero_guia_proveedor, observaciones.
+  - [x] Implementar `FacturaCompra`: proveedor, numero_factura_control, fecha_emision, monto_total, tasa_cambio_aplicada.
+- [x] **Módulo `production`:**
+  - [x] Implementar `Maquina` (`production_maquina`): codigo, nombre, tipo (`PLOTTER`, `CALANDRA`, `PLANCHA_TRANSFER`, `COSTURA_RECTA`, `OVERLOCK`), local (`ForeignKey('core.Local')`), horas_operativas, estado (`OPERATIVA`, `EN_MANTENIMIENTO`, `FUERA_SERVICIO`).
+  - [x] Implementar `OrdenProduccion` (`production_orden_produccion`): codigo_correlativo, pedido_venta_id (opcional), producto (`ForeignKey('catalog.Producto')`), cantidad, fecha_inicio, fecha_compromiso, estado (`PLANIFICADA`, `EN_PROCESO`, `PAUSADA`, `TERMINADA`, `CANCELADA`).
+  - [x] Implementar `PasoProduccion` (`production_paso_produccion`): orden_produccion, orden_secuencia (1, 2, 3), local_ejecucion (`ForeignKey('core.Local')` - ej. L1 corte, L2 planchado), descripcion_tarea, estado (`PENDIENTE`, `EN_PROCESO`, `COMPLETADO`).
+  - [x] Implementar `ConsumoMaterial` (`production_consumo_material`): paso_produccion, lote (`ForeignKey('inventory.Lote')`), cantidad_consumida, es_desperdicio (boolean), motivo_merma.
+  - [x] Implementar `OperacionMaquina` (`production_operacion_maquina`): maquina, paso_produccion, operador (`ForeignKey('core.Usuario')`), hora_inicio, hora_fin, resultado.
 
 #### 🌱 Seeders Iniciales (`database/seeders/03_seed_compras_produccion.sql`)
-- [ ] Proveedores de insumos registrados (telas, tintas, repuestos plóter).
-- [ ] Parque de máquinas asignadas a cada local:
+- [x] Proveedores de insumos registrados (telas, tintas, repuestos plóter).
+- [x] Parque de máquinas asignadas a cada local:
   - **L01:** Plóter de Sublimación Mimaki/Epson 1.60m, Cortadora Láser Textil.
   - **L02:** Plancha Térmica Industrial 80x100cm, Máquina de Coser Overlock 5 Hilos, Máquina Recta.
   - **L03:** Estampadora Combo 8 en 1 (Gorras, Tazas, Platos), Plancha de Transfer manual.
-- [ ] Datos de prueba de órdenes de compra y órdenes de producción piloto demostrando el salto de ruta multi-local L1 $\rightarrow$ L2.
+- [x] Datos de prueba de órdenes de compra y órdenes de producción piloto demostrando el salto de ruta multi-local L1 $\rightarrow$ L2.
 
 ---
 
