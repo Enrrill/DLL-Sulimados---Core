@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(
+            sql="CREATE SCHEMA IF NOT EXISTS precios;",
+            reverse_sql=migrations.RunSQL.noop,
+        ),
         migrations.CreateModel(
             name='ItemMatrizPrecios',
             fields=[
@@ -37,7 +41,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'ítem de la matriz de precios',
                 'verbose_name_plural': 'ítems de la matriz de precios',
-                'db_table': 'pricing_item_matriz_precios',
+                'db_table': 'precios.item_matriz_precios',
                 'ordering': ['-actualizado_en'],
             },
         ),
@@ -45,6 +49,9 @@ class Migration(migrations.Migration):
             name='HistorialCambioPrecio',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('creado_en', models.DateTimeField(auto_now_add=True)),
+                ('actualizado_en', models.DateTimeField(auto_now=True)),
+                ('activo', models.BooleanField(default=True)),
                 ('precio_anterior', models.DecimalField(decimal_places=2, max_digits=14, verbose_name='precio anterior')),
                 ('precio_nuevo', models.DecimalField(decimal_places=2, max_digits=14, verbose_name='precio nuevo')),
                 ('cambiado_en', models.DateTimeField(auto_now_add=True, verbose_name='cambiado en')),
@@ -54,7 +61,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'cambio de precio',
                 'verbose_name_plural': 'historial de cambios de precio',
-                'db_table': 'pricing_historial_cambio_precio',
+                'db_table': 'precios.historial_cambio_precio',
                 'ordering': ['-cambiado_en'],
             },
         ),
@@ -74,7 +81,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'parámetro de fórmula',
                 'verbose_name_plural': 'parámetros de fórmula',
-                'db_table': 'pricing_parametro_formula',
+                'db_table': 'precios.parametro_formula',
                 'ordering': ['-fecha_desde'],
             },
         ),

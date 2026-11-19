@@ -100,7 +100,7 @@ class ItemMatrizPrecios(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "ítem de la matriz de precios"
         verbose_name_plural = "ítems de la matriz de precios"
-        db_table = "pricing_item_matriz_precios"
+        db_table = "precios.item_matriz_precios"
         ordering = ["-actualizado_en"]
         indexes = [
             models.Index(fields=["producto"], name="pricing_item_producto_idx"),
@@ -157,8 +157,13 @@ class ItemMatrizPrecios(TimeStampedModel, ActivoMixin):
         return f"{destino} - {self.precio_base} {self.moneda}"
 
 
-class HistorialCambioPrecio(models.Model):
-    """Registro inmutable (append-only) de cada cambio de precio base (RF-46)."""
+class HistorialCambioPrecio(TimeStampedModel, ActivoMixin):
+    """Registro inmutable (append-only) de cada cambio de precio base (RF-46).
+
+    Hereda los mixins ``TimeStampedModel`` y ``ActivoMixin`` (estándar
+    obligatorio del grupo); la protección append-only vive en ``save`` y
+    ``delete``, que rechazan la modificación y el borrado de registros.
+    """
 
     item_matriz = models.ForeignKey(
         ItemMatrizPrecios,
@@ -181,7 +186,7 @@ class HistorialCambioPrecio(models.Model):
     class Meta:
         verbose_name = "cambio de precio"
         verbose_name_plural = "historial de cambios de precio"
-        db_table = "pricing_historial_cambio_precio"
+        db_table = "precios.historial_cambio_precio"
         ordering = ["-cambiado_en"]
         indexes = [
             models.Index(
@@ -244,7 +249,7 @@ class ParametroFormula(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "parámetro de fórmula"
         verbose_name_plural = "parámetros de fórmula"
-        db_table = "pricing_parametro_formula"
+        db_table = "precios.parametro_formula"
         ordering = ["-fecha_desde"]
         constraints = [
             models.UniqueConstraint(
