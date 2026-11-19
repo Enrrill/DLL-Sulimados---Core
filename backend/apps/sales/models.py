@@ -42,7 +42,7 @@ class Cliente(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "cliente"
         verbose_name_plural = "clientes"
-        db_table = "sales_cliente"
+        db_table = "ventas.cliente"
         ordering = ["nombre"]
         indexes = [
             models.Index(fields=["nombre"], name="sales_cliente_nombre_idx"),
@@ -97,7 +97,7 @@ class PedidoVenta(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "pedido de venta"
         verbose_name_plural = "pedidos de venta"
-        db_table = "sales_pedido_venta"
+        db_table = "ventas.pedido_venta"
         ordering = ["-creado_en"]
         indexes = [
             models.Index(
@@ -213,7 +213,7 @@ class LineaPedido(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "línea de pedido"
         verbose_name_plural = "líneas de pedido"
-        db_table = "sales_linea_pedido"
+        db_table = "ventas.linea_pedido"
         ordering = ["pedido_venta", "id"]
         indexes = [
             models.Index(fields=["pedido_venta"], name="sales_linea_pedido_idx"),
@@ -306,7 +306,7 @@ class Cobro(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "cobro"
         verbose_name_plural = "cobros"
-        db_table = "sales_cobro"
+        db_table = "ventas.cobro"
         ordering = ["-fecha"]
         indexes = [
             models.Index(fields=["pedido_venta"], name="sales_cobro_pedido_idx"),
@@ -376,7 +376,7 @@ class Factura(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "factura"
         verbose_name_plural = "facturas"
-        db_table = "sales_factura"
+        db_table = "ventas.factura"
         ordering = ["-fecha_emision", "-numero"]
         indexes = [
             models.Index(
