@@ -10,7 +10,7 @@ export function App() {
           DLL Sublimados
         </h1>
         <p className="text-sm text-slate-400 mb-6">
-          Frontend SPA (React + TypeScript + Vite + Tailwind CSS)
+          Frontend SPA (React 19 + JavaScript + Vite + Tailwind CSS v4)
         </p>
 
         <div className="bg-slate-900/60 rounded-lg p-4 mb-6 border border-slate-700/50 text-left text-xs font-mono text-slate-300">
@@ -34,4 +34,3 @@ export function App() {
 }
 
 export default App;
-
