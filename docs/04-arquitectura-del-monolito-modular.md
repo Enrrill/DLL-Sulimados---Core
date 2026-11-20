@@ -76,7 +76,7 @@ DLL-Sulimados---Core/
 │   │   ├── services/        # cliente HTTP (axios), tokens JWT y tipo de cambio
 │   │   └── hooks/           # useAuth, useLocalActivo, usePermisos
 │   ├── package.json
-│   └── vite.config.ts
+│   └── vite.config.js
 └── docker-compose.yml       # nginx (estáticos) + app Django + PostgreSQL + backup
 ```
 

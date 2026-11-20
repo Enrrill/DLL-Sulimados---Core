@@ -18,7 +18,7 @@ Cómo se organiza la SPA de DLL Sublimados en React + Vite + Tailwind CSS y cóm
 
 | Aspecto | Decisión |
 | --- | --- |
-| Framework | React 18+ con TypeScript |
+| Framework | React 19+ con JavaScript |
 | Empaquetado | Vite 5+ |
 | Estilos | Tailwind CSS (config de tokens: colores por local, tipografía, componentes) |
 | Server state | TanStack Query para caché y refetch de datos de la API |
@@ -31,21 +31,20 @@ Cómo se organiza la SPA de DLL Sublimados en React + Vite + Tailwind CSS y cóm
 
 ```
 frontend/
-├── vite.config.ts               # proxy de /api al Django en dev
-├── tailwind.config.ts           # tokens: paleta, tipografia, breakpoints
+├── vite.config.js               # proxy de /api al Django en dev
 ├── index.html
 └── src/
-    ├── main.tsx
+    ├── main.jsx
     ├── app/
-    │   ├── router.tsx           # rutas y guards de sesión y rol
+    │   ├── router.jsx           # rutas y guards de sesión y rol
     │   ├── layout/
-    │   │   ├── AppShell.tsx     # sidebar + topbar
-    │   │   ├── Sidebar.tsx      # nav segun permisos del usuario
-    │   │   └── TopBar.tsx       # selector de local (si es global), tipo de cambio, usuario
+    │   │   ├── AppShell.jsx     # sidebar + topbar
+    │   │   ├── Sidebar.jsx      # nav segun permisos del usuario
+    │   │   └── TopBar.jsx       # selector de local (si es global), tipo de cambio, usuario
     │   └── providers/           # AuthProvider, LocalProvider, QueryClient
     ├── services/
-    │   ├── http.ts              # axios base, interceptores de token
-    │   └── auth.ts              # login, refresh, logout
+    │   ├── http.js              # axios base, interceptores de token
+    │   └── auth.js              # login, refresh, logout
     ├── features/                # una carpeta por módulo del backend
     │   ├── auth/                # login, registro, perfil y configuración de usuario
     │   ├── auditoria/           # bitácora de usuarios, bitácora de stock, panel admin
