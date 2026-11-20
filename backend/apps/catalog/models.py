@@ -25,7 +25,7 @@ class Categoria(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "categoría"
         verbose_name_plural = "categorías"
-        db_table = "catalog_categoria"
+        db_table = "catalogo.categoria"
         ordering = ["tipo", "nombre"]
         constraints = [
             models.UniqueConstraint(
@@ -52,7 +52,7 @@ class Subcategoria(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "subcategoría"
         verbose_name_plural = "subcategorías"
-        db_table = "catalog_subcategoria"
+        db_table = "catalogo.subcategoria"
         ordering = ["categoria", "nombre"]
         constraints = [
             models.UniqueConstraint(
@@ -75,7 +75,7 @@ class UnidadMedida(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "unidad de medida"
         verbose_name_plural = "unidades de medida"
-        db_table = "catalog_unidad_medida"
+        db_table = "catalogo.unidad_medida"
         ordering = ["codigo"]
         constraints = [
             models.UniqueConstraint(
@@ -98,7 +98,7 @@ class Talla(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "talla"
         verbose_name_plural = "tallas"
-        db_table = "catalog_talla"
+        db_table = "catalogo.talla"
         ordering = ["orden", "codigo"]
         constraints = [
             models.UniqueConstraint(
@@ -144,7 +144,7 @@ class Material(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "material"
         verbose_name_plural = "materiales"
-        db_table = "catalog_material"
+        db_table = "catalogo.material"
         ordering = ["nombre"]
         indexes = [
             models.Index(
@@ -187,7 +187,7 @@ class Producto(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "producto"
         verbose_name_plural = "productos"
-        db_table = "catalog_producto"
+        db_table = "catalogo.producto"
         ordering = ["nombre"]
         indexes = [
             models.Index(
@@ -232,7 +232,7 @@ class VarianteProducto(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "variante de producto"
         verbose_name_plural = "variantes de producto"
-        db_table = "catalog_variante_producto"
+        db_table = "catalogo.variante_producto"
         ordering = ["producto", "sku"]
         constraints = [
             models.UniqueConstraint(
@@ -266,7 +266,7 @@ class Servicio(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "servicio"
         verbose_name_plural = "servicios"
-        db_table = "catalog_servicio"
+        db_table = "catalogo.servicio"
         ordering = ["nombre"]
 
     def __str__(self):

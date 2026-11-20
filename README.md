@@ -2,7 +2,7 @@
 
 Sistema integral de gestión para el negocio **DLL Sublimados** (sublimación, planchado y confección de prendas y objetos personalizados), distribuido en 3 locales y conectado a un servidor central.
 
-Consta de un backend monolítico modular en **Django 6 + PostgreSQL** (organizado en `backend/apps/` con `manage.py` en la raíz) y una SPA en **React 19 + TypeScript + Vite + Tailwind CSS** (en `frontend/`).
+Consta de un backend monolítico modular en **Django 6 + PostgreSQL** (organizado en `backend/apps/` con `manage.py` en la raíz) y una SPA en **React 19 + JavaScript + Vite + Tailwind CSS** (en `frontend/`).
 
 ---
 

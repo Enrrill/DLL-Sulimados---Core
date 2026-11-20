@@ -36,7 +36,7 @@ class PlantillaDocumento(TimeStampedModel, ActivoMixin):
     class Meta:
         verbose_name = "plantilla de documento"
         verbose_name_plural = "plantillas de documentos"
-        db_table = "documents_plantilla"
+        db_table = "documentos.plantilla_documento"
         ordering = ["tipo", "nombre"]
 
     def __str__(self):
@@ -96,7 +96,7 @@ class Documento(TimeStampedModel):
     class Meta:
         verbose_name = "documento"
         verbose_name_plural = "documentos"
-        db_table = "documents_documento"
+        db_table = "documentos.documento"
         ordering = ["-fecha_emision"]
         constraints = [
             models.UniqueConstraint(

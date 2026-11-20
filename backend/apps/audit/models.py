@@ -43,7 +43,7 @@ class BitacoraAccion(models.Model):
     class Meta:
         verbose_name = "bitácora de acción"
         verbose_name_plural = "bitácoras de acciones"
-        db_table = "audit_bitacora_accion"
+        db_table = "auditoria.bitacora_accion"
         ordering = ["-creado_en"]
         indexes = [
             models.Index(
@@ -115,7 +115,7 @@ class BitacoraStock(models.Model):
     class Meta:
         verbose_name = "bitácora de stock"
         verbose_name_plural = "bitácoras de stock"
-        db_table = "audit_bitacora_stock"
+        db_table = "auditoria.bitacora_stock"
         ordering = ["-creado_en"]
         indexes = [
             models.Index(

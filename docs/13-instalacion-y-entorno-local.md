@@ -161,7 +161,7 @@ DLL-Sulimados---Core/
 ├── frontend/                # SPA React + Vite + Tailwind CSS
 │   ├── src/                 # features/, app/, components/, services/
 │   ├── package.json
-│   └── vite.config.ts
+│   └── vite.config.js
 ├── docs/                    # Documentación técnica completa
 └── tests/                   # Pruebas de integración
 ```

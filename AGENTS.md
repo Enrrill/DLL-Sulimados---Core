@@ -1,7 +1,7 @@
 # DLL Sublimados — Core
 
 Monorepo de gestión para negocio de sublimación, confección y planchado (3 locales).
-Stack: Django 6.1 + PostgreSQL 14+ (Neon) + React 19 + TypeScript + Vite + Tailwind CSS v4.
+Stack: Django 6.1 + PostgreSQL 14+ (Neon) + React 19 + JavaScript + Vite + Tailwind CSS v4.
 
 ---
 
@@ -44,9 +44,9 @@ Stack: Django 6.1 + PostgreSQL 14+ (Neon) + React 19 + TypeScript + Vite + Tailw
 
 ## ⚛️ Frontend (React + Vite)
 
-- **Herramientas:** React 19 + TypeScript + Vite + Tailwind CSS v4.
+- **Herramientas:** React 19 + JavaScript + Vite + Tailwind CSS v4.
 - **Estilos:** Tailwind v4 configurado con `@tailwindcss/vite` e `@import "tailwindcss";` en `src/index.css`.
-- **Proxy de desarrollo:** `vite.config.ts` redirige `/api` automáticamente hacia `http://localhost:8000`.
+- **Proxy de desarrollo:** `vite.config.js` redirige `/api` automáticamente hacia `http://localhost:8000`.
 - **Gestor de paquetes:** `npm` con scripts `npm run dev` y `npm run build`.
 
 ---
