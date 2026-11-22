@@ -8,7 +8,7 @@
 -- Referencias:
 --   docs/ddl/06b.5-compras.md
 --   docs/modelo-datos/06.5-compras.md
---   tasks/tareas-grupo-base-de-datos.md
+--   docs/tasks/tareas-grupo-base-de-datos.md
 -- =============================================================================
 
 CREATE SCHEMA IF NOT EXISTS compras;

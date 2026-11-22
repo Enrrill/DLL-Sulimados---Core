@@ -2,7 +2,7 @@
 
 Implementa categorías, subcategorías, unidades de medida, tallas,
 materiales, productos, variantes y servicios con class Meta y
-db_table explícito (ver tasks/tareas-grupo-base-de-datos.md).
+db_table explícito (ver docs/tasks/tareas-grupo-base-de-datos.md).
 """
 
 from django.db import models

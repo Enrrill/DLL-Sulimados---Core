@@ -8,7 +8,7 @@
 -- Referencias:
 --   docs/ddl/06b.6-produccion.md
 --   docs/modelo-datos/06.6-produccion.md
---   tasks/tareas-grupo-base-de-datos.md
+--   docs/tasks/tareas-grupo-base-de-datos.md
 -- =============================================================================
 
 CREATE SCHEMA IF NOT EXISTS produccion;
